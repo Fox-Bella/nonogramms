@@ -15,5 +15,5 @@ class Square:
             pygame.draw.rect(scene, Square.color_fill, (self.x + 3, self.y + 3,
                                                    self.size - 6, self.size - 6))
         else:
-            pygame.draw.rect(scene, Square.color, (self.x, self.y, self.size, self.size), 1)
+            pygame.draw.rect(scene, Square.color, (self.x, self.y, self.size, self.size), 2)
 
