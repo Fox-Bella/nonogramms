@@ -7,6 +7,7 @@ class Manager:
 
     def __init__(self):
         self.sq = []
+        self.trigger = False
         for i in range(20):
             self.sq.append([])
             for j in range(20):
@@ -20,4 +21,16 @@ class Manager:
     def click(self, x, y):
         p1 = (x - 64) // setup.SIZE
         p2 = (y - 64) // setup.SIZE
-        self.sq[p1][p2].enabled = not self.sq[p1][p2].enabled
+        self.sq[p1][p2].enabled = self.trigger
+
+    def newMotion(self, x, y):
+        p1 = (x - 64) // setup.SIZE
+        p2 = (y - 64) // setup.SIZE
+        self.trigger = not self.sq[p1][p2].enabled
+
+
+    # Вернёт True, если клетка закрашена
+    def getEnabled(self, x, y):
+        p1 = (x - 64) // setup.SIZE
+        p2 = (y - 64) // setup.SIZE
+        return self.sq[p1][p2].enabled

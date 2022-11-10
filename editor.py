@@ -23,6 +23,7 @@ while playGame:
             if event.key == pygame.K_ESCAPE:
                 playGame = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
+            manager.newMotion(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
             drawing = True
         elif event.type == pygame.MOUSEBUTTONUP:
             drawing = False
