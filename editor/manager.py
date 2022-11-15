@@ -1,7 +1,8 @@
 import pygame
 from square import Square
 import setup
-from random import randint
+from button import Button
+
 
 class Manager:
 
@@ -13,10 +14,13 @@ class Manager:
             for j in range(20):
                 self.sq[i].append(Square(setup.BLANK_FIELD + i * setup.SIZE, setup.BLANK_FIELD + j * setup.SIZE, setup.SIZE))
 
+        self.get_code_button = Button(632, 757, '../png/get_code.png')
+
     def draw(self, scene: pygame):
         for i in range(len(self.sq)):
             for j in range(len(self.sq[i])):
                 self.sq[i][j].draw(scene)
+            self.get_code_button.draw(scene)
 
     def get_xy_coordinate_from_mouse(self, x, y):
         p1 = (x - setup.BLANK_FIELD) // setup.SIZE
@@ -30,6 +34,10 @@ class Manager:
 
     def newMotion(self, x, y):
         p1, p2 = self.get_xy_coordinate_from_mouse(x, y)
+        if (self.get_code_button.is_pressed(x, y)):
+            print("Кнопка нажата!")
+        # print(x, y)
+
         if (p1 >= 0 and p1 < len(self.sq) and p2 >= 0 and p2 < len(self.sq[0])):
             self.trigger = not self.sq[p1][p2].enabled
 

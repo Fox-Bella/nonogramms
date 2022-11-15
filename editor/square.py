@@ -19,14 +19,14 @@ class Square:
             pygame.draw.rect(scene, Square.color, (self.x, self.y, self.size, self.size), 1)
 
         if ((self.x - setup.BLANK_FIELD) / self.size) % 5 == 0:
-            pygame.draw.line(scene, Square.color_line, (self.x, self.y), (self.x, self.y + self.size), 1)
+            pygame.draw.line(scene, Square.color_line, (self.x, self.y), (self.x, self.y + self.size), 2)
         elif ((self.x + self.size - setup.BLANK_FIELD) / self.size) % 5 == 0:
-            pygame.draw.line(scene, Square.color_line, (self.x + self.size, self.y), (self.x + self.size, self.y + self.size), 1)
+            pygame.draw.line(scene, Square.color_line, (self.x + self.size, self.y), (self.x + self.size, self.y + self.size), 2)
 
         if ((self.y - setup.BLANK_FIELD) / self.size) % 5 == 0:
-            pygame.draw.line(scene, Square.color_line, (self.x, self.y), (self.x + self.size, self.y), 1)
+            pygame.draw.line(scene, Square.color_line, (self.x, self.y), (self.x + self.size, self.y), 2)
         elif ((self.y + self.size - setup.BLANK_FIELD) / self.size) % 5 == 0:
-            pygame.draw.line(scene, Square.color_line, (self.x, self.y + self.size), (self.x + self.size, self.y + self.size), 1)
+            pygame.draw.line(scene, Square.color_line, (self.x, self.y + self.size), (self.x + self.size, self.y + self.size), 2)
 
 
 
