@@ -1,6 +1,7 @@
 import pygame
 
 class Button:
+
     def __init__(self, x, y, image_file):
         self.x = x
         self.y = y
