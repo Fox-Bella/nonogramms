@@ -17,14 +17,17 @@ class Manager:
                                          setup.BLANK_FIELD + j * setup.SIZE,
                                          setup.SIZE))
 
-        self.get_code_button = Button(632, 757, '../png/get_code.png')
+        self.get_code_button = Button(578, 757, '../png/button_get.png')
+        self.clear_button = Button(64, 757, '../png/button_delete.png')
 
     def draw(self, scene: pygame):
         for i in range(len(self.sq)):
             for j in range(len(self.sq[i])):
                 self.sq[i][j].drawIJ(scene, setup.BLANK_FIELD + i * setup.SIZE, setup.BLANK_FIELD + j * setup.SIZE)
                 # self.sq[i][j].draw(scene)
+
         self.get_code_button.draw(scene)
+        self.clear_button.draw(scene)
 
     def get_xy_coordinate_from_mouse(self, x, y):
         p1 = (x - setup.BLANK_FIELD) // setup.SIZE
@@ -38,8 +41,16 @@ class Manager:
 
     def newMotion(self, x, y):
         p1, p2 = self.get_xy_coordinate_from_mouse(x, y)
+
         if (self.get_code_button.is_pressed(x, y)):
             GetCode().get_code(self.sq)
+
+        if (self.clear_button.is_pressed(x, y)):
+            for i in range(len(self.sq)):
+                for j in range(len(self.sq[i])):
+                    self.sq[i][j].enabled = False
+
+
         # print(x, y)
 
         if (p1 >= 0 and p1 < len(self.sq) and p2 >= 0 and p2 < len(self.sq[0])):
