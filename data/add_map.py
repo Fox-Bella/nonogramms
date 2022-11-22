@@ -11,8 +11,16 @@ class AddMap:
                                        [1, 0, 0, 0, 1],
                                        [1, 0, 0, 0, 1],
                                        [0, 1, 1, 1, 0]]))
-        self.level.append(Map("", []))
-        self.level.append(Map("", []))
+        self.level.append(Map("Солнце", [[1, 0, 0, 0, 1],
+                                         [0, 1, 1, 1, 0],
+                                         [0, 1, 1, 1, 0],
+                                         [0, 1, 1, 1, 0],
+                                         [1, 0, 0, 0, 1]]))
+        self.level.append(Map("ТВ", [[1, 0, 0, 0, 1],
+                                       [0, 1, 1, 1, 0],
+                                       [1, 0, 0, 0, 1],
+                                       [1, 0, 0, 0, 1],
+                                       [0, 1, 1, 1, 0]]))
         self.level.append(Map("", []))
         self.level.append(Map("", []))
         self.level.append(Map("", []))
