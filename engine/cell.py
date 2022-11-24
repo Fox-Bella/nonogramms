@@ -23,7 +23,7 @@ class Cell:
         self.error_digit = True
         self.print_to_screen = "?"
 
-        if randint(0, 100) < 60:
+        if value == 0 or randint(0, 100) < 60:
             self.error_digit = False
             self.print_to_screen = f"{value}"
 

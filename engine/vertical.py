@@ -19,8 +19,11 @@ class Vertical:
                 if maps[y][x] == 0 and count > 0:
                     data.append(count)
                     count = 0
+            # if count > 0 or (count == 0 and len(data) == 0):
+            #     data.append(count)
             if count > 0:
                 data.append(count)
+
             # print(data)
             self.data_lines.append(DataLines(start_x + x * size_cell,
                                              start_y - 30, size_cell,

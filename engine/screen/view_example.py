@@ -75,9 +75,9 @@ class ViewExample:
         self.frame += 1
 
         if self.frame < setup.FPS // 2:
-            curcor = "|"
+            cursor = "|"
         else:
-            curcor = ""
+            cursor = ""
 
         if self.frame > setup.FPS:
             self.frame = 0
@@ -85,7 +85,7 @@ class ViewExample:
         pygame.draw.rect(scene, Square.color_line, (self.x, self.y, self.width, self.height))
         pygame.draw.rect(scene, Square.color_fill, (self.x, self.y, self.width, self.height), 5)
         scene.blit(self.font.getBigText("CAPTION", "Решите пример:", setup.COLOR_WHITE), (self.x + 15, self.y + 10))
-        scene.blit(self.font.getBigText("EXAMPLE", self.msg + self.data_input + curcor, setup.COLOR_YELLOW),
+        scene.blit(self.font.getBigText("EXAMPLE", self.msg + self.data_input + cursor, setup.COLOR_YELLOW),
                    (self.x + 15, self.y + 50))
 
         for i in range(len(self.buttons)):
