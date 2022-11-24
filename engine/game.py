@@ -97,7 +97,7 @@ class Game:
         self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field)
         self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field)
 
-
+    # Выводит на экран содержимое всех вложенных объектов классов
     def draw(self, scene: pygame, deltatime):
         for i in range(len(self.fields)):
             for j in range(len(self.fields[i])):
