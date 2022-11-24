@@ -4,9 +4,6 @@ class Map:
         self._name_level = name_level
         self._data_level = data_level
 
-        if self.name_level == "":
-            raise ValueError('Ошибка: нет имени уровня, работать не буду :(')
-
     @property
     def name_level(self):
         return self._name_level

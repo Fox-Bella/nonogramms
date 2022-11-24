@@ -72,7 +72,7 @@ class Game:
         self.size_field = square_game_sizes[min(len(self.fields), len(self.fields[0])) - 1]
 
         self.start_x = (WIDTH - len(self.current_map[0]) * self.size_field) // 2
-        self.start_y = (HEIGHT - len(self.current_map) * self.size_field) // 2 + 50
+        self.start_y = (HEIGHT - len(self.current_map) * self.size_field) // 2 + 100
         self.i_count_fields = len(self.current_map)
         self.j_count_fields = len(self.current_map[0])
         self.end_x = self.start_x + self.size_field * self.j_count_fields
