@@ -22,7 +22,10 @@ class Vertical:
             if count > 0:
                 data.append(count)
             # print(data)
-            self.data_lines.append(DataLines(start_x + x * size_cell, start_y - 30, size_cell, data, TEXT_COLOR[x % 2]))
+            self.data_lines.append(DataLines(start_x + x * size_cell,
+                                             start_y - 30, size_cell,
+                                             data, TEXT_COLOR[x % 2],
+                                             DataLines.VERTICAL))
 
     def check_mouse(self, x, y):
         for i in range(len(self.data_lines)):

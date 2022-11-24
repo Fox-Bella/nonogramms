@@ -11,10 +11,7 @@ class Square(Square):
 
     def __init__(self, x, y, size):
         super(Square, self).__init__(x, y, size)
-        self.metka = False
-
-    def invert_metka(self):
-        self.metka = not self.metka
+        self.blocked = False
 
     def drawIJ(self, scene, i, j, i_cells, j_cells):
         pygame.draw.rect(scene, self.color, (self.x, self.y, self.size, self.size), 1)
@@ -33,7 +30,7 @@ class Square(Square):
         elif (j + 1) % j_cells == 0:
             pygame.draw.line(scene, self.color_line_outline, (self.x, self.y + self.size - 1), (self.x + self.size, self.y + self.size - 1), self.width_line)
 
-        if self.metka:
+        if self.blocked:
             pygame.draw.line(scene,
                              setup.COLOR_RED,
                              (self.x + self.size // 4, self.y + self.size // 4),

@@ -17,10 +17,20 @@ class ViewExample:
             self.value = value
 
         def draw(self, scene):
-            pygame.draw.rect(scene, Square.color, (self.x, self.y, self.width, self.height))
-            pygame.draw.rect(scene, Square.color_fill, (self.x, self.y, self.width, self.height), 2)
-            scene.blit(self.font.getBigText(f"BTN{self.value}", f"{self.value}", setup.COLOR_WHITE),
-                       (self.x + 9, self.y + 2))
+            x = pygame.mouse.get_pos()[0]
+            y = pygame.mouse.get_pos()[1]
+            if self.x < x < self.x + self.width and \
+                    self.y < y < self.y + self.height:
+                pygame.draw.rect(scene, setup.TEXT_LIGHT_GOOD, (self.x, self.y, self.width, self.height))
+                pygame.draw.rect(scene, Square.color_fill, (self.x, self.y, self.width, self.height), 2)
+                scene.blit(self.font.getBigText(f"BTN{self.value}", f"{self.value}", setup.COLOR_WHITE),
+                           (self.x + 9, self.y + 2))
+            else:
+                pygame.draw.rect(scene, Square.color, (self.x, self.y, self.width, self.height))
+                pygame.draw.rect(scene, Square.color_fill, (self.x, self.y, self.width, self.height), 2)
+                scene.blit(self.font.getBigText(f"BTN{self.value}", f"{self.value}", setup.COLOR_WHITE),
+                           (self.x + 9, self.y + 2))
+
 
         def press_mouse(self, x, y):
             if self.x < x < self.x + self.width and \
@@ -49,8 +59,11 @@ class ViewExample:
 
         self.width = 375
         self.height = 180
-        if self.x > setup.WIDTH // 2:
-            self.x -= self.width + size_field
+        self.x -= self.width // 2 + size_field
+        if self.y > setup.HEIGHT // 2:
+            self.y -= self.height
+        # if self.x > setup.WIDTH // 2:
+        #     self.x -= self.width + size_field
 
         self.buttons = []
         for i in range(10):

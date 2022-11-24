@@ -17,6 +17,7 @@ maps = AddMap()
 game = Game(maps)
 
 mouse_button_pressed_1 = 0
+mouse_button_pressed_3 = 0
 
 while playGame:
     for event in pygame.event.get():
@@ -28,14 +29,19 @@ while playGame:
         # Если нет класса с выведенным примером для решения
         if setup.view_example is None:
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if mouse_button_pressed_1 == 0:
+                if mouse_button_pressed_1 == 0 and event.button == 1:
                     game.press_mouse_1(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                     game.set_filling(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+
+                if mouse_button_pressed_3 == 0 and event.button == 3:
+                    game.set_blocked(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+
                 mouse_button_pressed_1 = event.button
-                if mouse_button_pressed_1 == 3:
-                    game.mouse_3_button_down(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+                mouse_button_pressed_3 = event.button
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 mouse_button_pressed_1 = 0
+                mouse_button_pressed_3 = 0
         else:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
@@ -49,9 +55,15 @@ while playGame:
 
     pygame.display.flip()
 
+
+    # Если не отображено окно с примером, то работаем с мышкой и основным полем
     if setup.view_example is None:
-        if mouse_button_pressed_1 == 1 or mouse_button_pressed_1 == 3:
-            game.mouse_button_down(mouse_button_pressed_1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
-        game.act(deltatime, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+        if mouse_button_pressed_1 == 1:
+            game.mouse_1_button_down(mouse_button_pressed_1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+        if mouse_button_pressed_3 == 3:
+            game.mouse_3_button_down(mouse_button_pressed_3, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+
+
+    game.act(deltatime, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
     deltatime = clock.tick(FPS) / 1000

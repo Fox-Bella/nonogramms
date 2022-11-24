@@ -23,6 +23,7 @@ class Game:
         self.horizontal = None
         self.vertical = None
         self.fill = True
+        self.blocked = True
         self.start_level()
 
     def getCoord(self, j, i):
@@ -41,23 +42,25 @@ class Game:
 
         self.fill = not self.fields[i][j].enabled
 
-
-    def mouse_3_button_down(self, j, i):
+    def set_blocked(self, j, i):
         j, i = self.getCoord(j, i)
         if j == -1 and i == -1:
             return False
-        self.fields[i][j].invert_metka()
 
-    def mouse_button_down(self, mouse, j, i):
+        self.blocked = not self.fields[i][j].blocked
+
+    def mouse_3_button_down(self, mouse, j, i):
+        j, i = self.getCoord(j, i)
+        if j == -1 and i == -1:
+            return False
+        self.fields[i][j].blocked = self.blocked
+
+    def mouse_1_button_down(self, mouse, j, i):
         j, i = self.getCoord(j, i)
         if j == -1 and i == -1:
             return False
         if mouse == 1:
             self.fields[i][j].enabled = self.fill
-
-
-        #elif mouse == 3:
-        #    self.fields[i][j].enabled = False
 
     def start_level(self):
         # Текущая карта
@@ -91,7 +94,7 @@ class Game:
             if len(self.fields) % j == 0:
                 self.j_line_cells = j
 
-        # self.horizontal = Horizontal(self.current_map)
+        self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field)
         self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field)
 
 
@@ -100,10 +103,19 @@ class Game:
             for j in range(len(self.fields)):
                 self.fields[i][j].drawIJ(scene, j, i, self.i_line_cells, self.j_line_cells)
 
-        self.vertical.draw(scene)
+        if not (self.vertical is None):
+            self.vertical.draw(scene)
+        if not (self.horizontal is None):
+            self.horizontal.draw(scene)
 
     def act(self, deltatime, x, y):
-        self.vertical.check_mouse(x, y)
+        if not (self.vertical is None):
+            self.vertical.check_mouse(x, y)
+        if not (self.horizontal is None):
+            self.horizontal.check_mouse(x, y)
 
     def press_mouse_1(self, x, y):
-        self.vertical.press_mouse_1(x, y)
+        if not (self.vertical is None):
+            self.vertical.press_mouse_1(x, y)
+        if not (self.horizontal is None):
+            self.horizontal.press_mouse_1(x, y)

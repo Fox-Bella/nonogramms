@@ -19,8 +19,6 @@ class Cell:
         self.y = y
         self.size_field = size_field
 
-
-
         # Неправильное значение?
         self.error_digit = True
         self.print_to_screen = "?"
@@ -34,16 +32,25 @@ class Cell:
 
     def draw(self, scene: pygame.surface):
         key = f"cell_{self.x}{self.y}"
-        # srf = self.font.getSystemText(key, f"{self.value}", color=TEXT_COLOR)
-        srf = self.font.getSystemText(key, f"{self.print_to_screen}", self.text_color)
-        corr = (self.size_field - srf.get_width()) // 2
+
+        if self.print_to_screen == "?":
+            pygame.draw.rect(scene, TEXT_LIGHT_ATTENTION,
+                             (self.x + (self.size_field - self.size_field // 2) // 2 , self.y,
+                              self.size_field // 2, 21))
+            # srf = self.font.getSystemText(key, f"{self.value}", color=TEXT_COLOR)
+            srf = self.font.getSystemText(key, f"{self.print_to_screen}", COLOR_DEEP_GRAY)
+            corrX = (self.size_field - srf.get_width()) // 2
+        else:
+            # srf = self.font.getSystemText(key, f"{self.value}", color=TEXT_COLOR)
+            srf = self.font.getSystemText(key, f"{self.print_to_screen}", self.text_color)
+            corrX = (self.size_field - srf.get_width()) // 2
 
         if self.bg:
             if self.error_digit:
                 pygame.draw.rect(scene, TEXT_LIGHT_BAD, (self.x, self.y, self.size_field, 21))
             else:
                 pygame.draw.rect(scene, TEXT_LIGHT_GOOD, (self.x, self.y, self.size_field, 21))
-        scene.blit(srf, (self.x + corr, self.y))
+        scene.blit(srf, (self.x + corrX, self.y))
 
     def check_mouse(self, x, y):
         if self.x < x < self.x + self.size_field and \
