@@ -100,7 +100,7 @@ class Game:
 
     def draw(self, scene: pygame, deltatime):
         for i in range(len(self.fields)):
-            for j in range(len(self.fields)):
+            for j in range(len(self.fields[i])):
                 self.fields[i][j].drawIJ(scene, j, i, self.i_line_cells, self.j_line_cells)
 
         if not (self.vertical is None):

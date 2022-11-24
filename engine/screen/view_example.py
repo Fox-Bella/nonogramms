@@ -59,11 +59,18 @@ class ViewExample:
 
         self.width = 375
         self.height = 180
-        self.x -= self.width // 2 + size_field
-        if self.y > setup.HEIGHT // 2:
-            self.y -= self.height
-        # if self.x > setup.WIDTH // 2:
-        #     self.x -= self.width + size_field
+        self.x -= self.width // 4 + size_field
+        self.y -= self.height // 4 + size_field
+
+        if self.y + self.height + 20 > setup.HEIGHT:
+            self.y = self.height + self.height + 20
+        if self.y - self.height - 20 <= 0:
+            self.y = 20
+        if self.x + self.width + 20 >= setup.WIDTH:
+            self.x = setup.WIDTH - self.width - 20
+
+        if self.x < 20:
+            self.x = 20
 
         self.buttons = []
         for i in range(10):

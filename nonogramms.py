@@ -43,6 +43,8 @@ while playGame:
                 mouse_button_pressed_1 = 0
                 mouse_button_pressed_3 = 0
         else:
+            mouse_button_pressed_1 = 0
+            mouse_button_pressed_3 = 0
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     setup.view_example.press_mouse_button_1(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
