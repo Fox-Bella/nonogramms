@@ -1,7 +1,9 @@
 import setup
 from setup import *
-from data.add_map import AddMap
+# from data.add_map import AddMap
+from data.add_map23456790 import AddMap
 from engine.game import Game
+from engine.buttons.buttons import Buttons
 import pygame
 
 # Добавить чтобы работал pygame
@@ -15,6 +17,7 @@ deltatime = 0
 
 maps = AddMap()
 game = Game(maps)
+buttons = Buttons()
 
 mouse_button_pressed_1 = 0
 mouse_button_pressed_3 = 0
@@ -51,6 +54,7 @@ while playGame:
 
     scene.fill((0, 0, 0))
     game.draw(scene, deltatime)
+    buttons.draw(scene, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
     if not (setup.view_example is None):
         setup.view_example.draw(scene)

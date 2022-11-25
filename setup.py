@@ -22,6 +22,7 @@ TEXT_LIGHT_ATTENTION = "#936d36"
 COLOR_WHITE = "#EFEFEF"
 COLOR_DEEP_GRAY = "#373737"
 COLOR_YELLOW = "#FFFF00"
+COLOR_YELLOW_DARK = "#9d933a"
 COLOR_RED = "#FF4747"
 
 square_game_sizes = []
@@ -30,3 +31,4 @@ for i in range(20):
 level = 0
 
 view_example = None
+difficulty = 0

@@ -11,6 +11,7 @@ class Vertical:
 
         self.data_lines = []
 
+        max = 0
         for x in range(len(maps[0])):
             count = 0
             data = []
@@ -29,6 +30,11 @@ class Vertical:
                                              start_y - 30, size_cell,
                                              data, TEXT_COLOR[x % 2],
                                              DataLines.VERTICAL))
+
+            if len(data) > max:
+                max = len(data)
+
+        self.width = max * size_cell
 
     def check_mouse(self, x, y):
         for i in range(len(self.data_lines)):

@@ -24,6 +24,8 @@ class Game:
         self.vertical = None
         self.fill = True
         self.blocked = True
+        self.width = None
+        self.height = None
         self.start_level()
 
     def getCoord(self, j, i):
@@ -71,12 +73,32 @@ class Game:
 
         self.size_field = square_game_sizes[min(len(self.fields), len(self.fields[0])) - 1]
 
-        self.start_x = (WIDTH - len(self.current_map[0]) * self.size_field) // 2
-        self.start_y = (HEIGHT - len(self.current_map) * self.size_field) // 2 + 100
         self.i_count_fields = len(self.current_map)
         self.j_count_fields = len(self.current_map[0])
+
+        self.width = self.j_count_fields * self.size_field
+        self.height = self.i_count_fields * self.size_field
+
+        self.start_x = (795 - self.width) // 2
+        self.start_y = (HEIGHT - self.height) // 2 + 100
+
+        self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field)
+        self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field)
+
+        self.start_x = (795 - self.width + self.vertical.width) // 2
+        self.start_y = (HEIGHT - self.height - self.horizontal.height) // 2 + 100
+
+        self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field)
+        self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field)
+
         self.end_x = self.start_x + self.size_field * self.j_count_fields
-        self.end_y = self.start_y + self.size_field * self.j_count_fields
+        self.end_y = self.start_y + self.size_field * self.i_count_fields
+
+
+
+        # 780 - это граница, где начинаются кнопки
+        # self.start_y = (750 - self.horizontal.height - self.width) // 2
+        # self.start_x = (HEIGHT - self.vertical.width - self.height) // 2 + 100
 
         for i in range(len(self.fields)):
             for j in range(len(self.fields[i])):
@@ -86,16 +108,19 @@ class Game:
                 # Включить, чтобы при загрузке показались все квадраты
                 # self.fields[i][j].enabled = self.current_map[i][j]
 
-        marker = [3, 4, 5]
+
+        self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field)
+        self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field)
+
+
+        # Из скольки клеток состоят обведённые светлом блоки (3x3, 4x4, 5x5)
+        marker = [1, 2, 3, 4, 5]
         for i in marker:
             if len(self.fields) % i == 0:
                 self.i_line_cells = i
         for j in marker:
             if len(self.fields) % j == 0:
                 self.j_line_cells = j
-
-        self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field)
-        self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field)
 
     # Выводит на экран содержимое всех вложенных объектов классов
     def draw(self, scene: pygame, deltatime):

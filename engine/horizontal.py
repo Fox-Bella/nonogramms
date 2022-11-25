@@ -2,16 +2,17 @@ from engine.vertical import Vertical
 from engine.data_lines import DataLines
 from setup import *
 
+
 class Horizontal(Vertical):
 
     def __init__(self, maps, start_x, start_y, size_cell):
-        for y in range(len(maps)):
-            for x in range(len(maps[y])):
-                print(f"{maps[y][x]} ", end="")
-            print()
+        # for y in range(len(maps)):
+        #     for x in range(len(maps[y])):
+        #         print(f"{maps[y][x]} ", end="")
+        #     print()
 
         self.data_lines = []
-
+        max = 0
         for x in range(len(maps)):
             count = 0
             data = []
@@ -28,3 +29,7 @@ class Horizontal(Vertical):
                                              size_cell, data,
                                              TEXT_COLOR[x % 2],
                                              DataLines.HORIZONTAL))
+            if len(data) > max:
+                max = len(data)
+
+        self.height = max * size_cell
