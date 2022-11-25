@@ -24,15 +24,23 @@ class Button:
             return True
         return False
 
-    def draw(self, scene, mouse_x, mouse_y):
+    def draw(self, scene, mouse_x, mouse_y, pressable):
+        pressed_id_button = "NONE"
+
         if not self.visible:
-            return False
-        if self.get_mouse_in_button(mouse_x, mouse_y):
+            return pressed_id_button
+
+        if self.get_mouse_in_button(mouse_x, mouse_y) and pressable:
             scene.blit(self.images[1], (self.x - 25, self.y))
             self.draw_hint(scene)
+            pressed_id_button = self.id_button
         else:
             scene.blit(self.images[0], (self.x, self.y))
-        return True
+
+        if pressable:
+            return pressed_id_button
+
+        return "NONE"
 
     # Вывод подсказки при активной кнопке
     def draw_hint(self, scene):

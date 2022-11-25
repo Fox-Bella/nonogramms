@@ -128,6 +128,9 @@ class Game:
             for j in range(len(self.fields[i])):
                 self.fields[i][j].drawIJ(scene, j, i, self.i_line_cells, self.j_line_cells)
 
+        pygame.draw.rect(scene, Square.color_line_outline, (self.start_x - 1, self.start_y - 1,
+                                                            self.width + 2, self.height + 2), 4)
+
         if not (self.vertical is None):
             self.vertical.draw(scene)
         if not (self.horizontal is None):

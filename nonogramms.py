@@ -54,13 +54,36 @@ while playGame:
 
     scene.fill((0, 0, 0))
     game.draw(scene, deltatime)
-    buttons.draw(scene, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
     if not (setup.view_example is None):
+        buttons.draw(scene, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], False)
         setup.view_example.draw(scene)
+    else:
+        pressed_btn = buttons.draw(scene, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], True)
+        if mouse_button_pressed_1 == 1 and pressed_btn != "NONE":
+            mouse_button_pressed_1 = 0
+            if pressed_btn == Buttons.CHECK:
+                print("Проверка")
+            elif pressed_btn == Buttons.RESTART:
+                pass
+            elif pressed_btn == Buttons.HINT:
+                pass
+            elif pressed_btn == Buttons.MATH_30:
+                setup.difficulty = 1
+            elif pressed_btn == Buttons.MATH_60:
+                setup.difficulty = 2
+            elif pressed_btn == Buttons.MATH_100:
+                setup.difficulty = 0
+            elif pressed_btn == Buttons.NEXT:
+                pass
+            elif pressed_btn == Buttons.PREV:
+                pass
+            elif pressed_btn == Buttons.EXIT:
+                pass
+            elif pressed_btn == Buttons.RESET_GAME:
+                pass
 
     pygame.display.flip()
-
 
     # Если не отображено окно с примером, то работаем с мышкой и основным полем
     if setup.view_example is None:
@@ -68,7 +91,6 @@ while playGame:
             game.mouse_1_button_down(mouse_button_pressed_1, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
         if mouse_button_pressed_3 == 3:
             game.mouse_3_button_down(mouse_button_pressed_3, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
-
 
     game.act(deltatime, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
