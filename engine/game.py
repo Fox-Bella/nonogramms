@@ -3,6 +3,7 @@ from setup import *
 from engine.square import Square
 from engine.horizontal import Horizontal
 from engine.vertical import Vertical
+from engine.errors.errors import Error
 
 
 class Game:
@@ -26,43 +27,18 @@ class Game:
         self.blocked = True
         self.width = None
         self.height = None
+
+        # Считаем кадры, чтобы разгрузить процессор на проверках
+        self.frame = 0
+
+        # Чтобы не срабатывала ошибка дважды на одну и ту же клетку
+        self.last_i = -1
+        self.last_j = -1
+
+        # Здесь анимация ошибок
+        self.errors = []
+
         self.start_level()
-
-    def getCoord(self, j, i):
-        if (j < self.start_x or j >= self.end_x or
-                i < self.start_y or i >= self.end_y):
-            return -1, -1
-
-        i = (i - self.start_y) // self.size_field
-        j = (j - self.start_x) // self.size_field
-        return j, i
-
-    def set_filling(self, j, i):
-        j, i = self.getCoord(j, i)
-        if j == -1 and i == -1:
-            return False
-
-        self.fill = not self.fields[i][j].enabled
-
-    def set_blocked(self, j, i):
-        j, i = self.getCoord(j, i)
-        if j == -1 and i == -1:
-            return False
-
-        self.blocked = not self.fields[i][j].blocked
-
-    def mouse_3_button_down(self, mouse, j, i):
-        j, i = self.getCoord(j, i)
-        if j == -1 and i == -1:
-            return False
-        self.fields[i][j].blocked = self.blocked
-
-    def mouse_1_button_down(self, mouse, j, i):
-        j, i = self.getCoord(j, i)
-        if j == -1 and i == -1:
-            return False
-        if mouse == 1:
-            self.fields[i][j].enabled = self.fill
 
     def start_level(self):
         # Текущая карта
@@ -94,8 +70,6 @@ class Game:
         self.end_x = self.start_x + self.size_field * self.j_count_fields
         self.end_y = self.start_y + self.size_field * self.i_count_fields
 
-
-
         # 780 - это граница, где начинаются кнопки
         # self.start_y = (750 - self.horizontal.height - self.width) // 2
         # self.start_x = (HEIGHT - self.vertical.width - self.height) // 2 + 100
@@ -106,12 +80,10 @@ class Game:
                                            self.start_y + i * self.size_field,
                                            self.size_field)
                 # Включить, чтобы при загрузке показались все квадраты
-                # self.fields[i][j].enabled = self.current_map[i][j]
-
+                self.fields[i][j].enabled = self.current_map[i][j]
 
         self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field)
         self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field)
-
 
         # Из скольки клеток состоят обведённые светлом блоки (3x3, 4x4, 5x5)
         marker = [1, 2, 3, 4, 5]
@@ -122,21 +94,33 @@ class Game:
             if len(self.fields) % j == 0:
                 self.j_line_cells = j
 
-    # Выводит на экран содержимое всех вложенных объектов классов
-    def draw(self, scene: pygame, deltatime):
-        for i in range(len(self.fields)):
-            for j in range(len(self.fields[i])):
-                self.fields[i][j].drawIJ(scene, j, i, self.i_line_cells, self.j_line_cells)
+    def getCoord(self, j, i):
+        if (j < self.start_x or j >= self.end_x or
+                i < self.start_y or i >= self.end_y):
+            return -1, -1
 
-        pygame.draw.rect(scene, Square.color_line_outline, (self.start_x - 1, self.start_y - 1,
-                                                            self.width + 2, self.height + 2), 4)
+        i = (i - self.start_y) // self.size_field
+        j = (j - self.start_x) // self.size_field
+        return j, i
 
-        if not (self.vertical is None):
-            self.vertical.draw(scene)
-        if not (self.horizontal is None):
-            self.horizontal.draw(scene)
+    def set_blocked(self, j, i):
+        j, i = self.getCoord(j, i)
+        if j == -1 and i == -1:
+            return False
+
+        self.blocked = not self.fields[i][j].blocked
+
+    def mouse_3_button_down(self, mouse, j, i):
+        j, i = self.getCoord(j, i)
+        if j == -1 and i == -1:
+            return False
+        self.fields[i][j].blocked = self.blocked
 
     def act(self, deltatime, x, y):
+        self.frame += 1
+        if self.frame > 100000:
+            self.frame = 1
+
         if not (self.vertical is None):
             self.vertical.check_mouse(x, y)
         if not (self.horizontal is None):
@@ -147,3 +131,56 @@ class Game:
             self.vertical.press_mouse_1(x, y)
         if not (self.horizontal is None):
             self.horizontal.press_mouse_1(x, y)
+
+    # Выводит на экран содержимое всех вложенных объектов классов
+    def draw(self, scene: pygame, deltatime):
+
+        for i in range(len(self.fields)):
+            for j in range(len(self.fields[i])):
+                self.fields[i][j].drawIJ(scene, j, i, self.i_line_cells, self.j_line_cells)
+
+        if len(self.errors) > 0:
+            for err in self.errors:
+                err.draw(scene, deltatime)
+
+        pygame.draw.rect(scene, Square.color_line_outline, (self.start_x - 1, self.start_y - 1,
+                                                            self.width + 2, self.height + 2), 4)
+        if not (self.vertical is None):
+            self.vertical.draw(scene)
+        if not (self.horizontal is None):
+            self.horizontal.draw(scene)
+
+    # Установка/переключатель заливки/удаления
+    def set_filling(self, j, i):
+        j, i = self.getCoord(j, i)
+        if j == -1 and i == -1:
+            return False
+
+        self.fill = not self.fields[i][j].enabled
+
+    # Нажатие мышкой по полю/клетке
+    # Тут же считает и ошибки
+    def mouse_1_button_down(self, mouse, j, i):
+        j, i = self.getCoord(j, i)
+        if j == -1 and i == -1:
+            return False
+
+        if self.fields[i][j].blocked:
+            return False
+
+        if mouse == 1:
+            self.fields[i][j].enabled = self.fill
+
+            if self.fill:
+                if self.last_i != i or self.last_j != j:
+                    self.last_i = i
+                    self.last_j = j
+                    if self.current_map[i][j] == 0:
+                        self.errors.append(Error(self.fields[i][j], FPS / 2))
+                        self.fields[i][j].blocked = True
+                        self.fields[i][j].enabled = False
+                        self.last_i = -1
+                        self.last_j = -1
+
+
+

@@ -2,6 +2,7 @@ import pygame
 import setup
 from editor.square import Square
 
+# Клетка на поле
 class Square(Square):
 
     color_line_outline = "#7A7E7A"
