@@ -31,4 +31,9 @@ for i in range(20):
 level = 0
 
 view_example = None
+
+# Данные для расчёта процентов скрытых выражениями чисел
+percent_digits = [30, 60, 100]
+
 difficulty = 0
+error = 0

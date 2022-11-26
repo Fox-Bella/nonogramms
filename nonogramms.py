@@ -70,10 +70,13 @@ while playGame:
                 pass
             elif pressed_btn == Buttons.MATH_30:
                 setup.difficulty = 1
+                game.start_level()
             elif pressed_btn == Buttons.MATH_60:
                 setup.difficulty = 2
+                game.start_level()
             elif pressed_btn == Buttons.MATH_100:
                 setup.difficulty = 0
+                game.start_level()
             elif pressed_btn == Buttons.NEXT:
                 pass
             elif pressed_btn == Buttons.PREV:

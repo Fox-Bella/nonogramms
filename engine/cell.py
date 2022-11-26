@@ -20,15 +20,18 @@ class Cell:
         self.size_field = size_field
 
         # Неправильное значение?
-        self.error_digit = True
-        self.print_to_screen = "?"
+        # self.error_digit = True
+        # self.print_to_screen = "?"
 
-        if value == 0 or randint(0, 100) < 60:
-            self.error_digit = False
-            self.print_to_screen = f"{value}"
+        self.error_digit = False
+        self.print_to_screen = f"{value}"
 
         # self.print_to_screen = f"{value}"
         self.bg = False
+
+    def set_error_digit(self):
+        self.error_digit = True
+        self.print_to_screen = "?"
 
     def draw(self, scene: pygame.surface):
         key = f"cell_{self.x}{self.y}"

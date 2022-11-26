@@ -38,8 +38,8 @@ class GetCode:
                         maxVertical = p2
                 p2 -= 1
 
-        print(minHorizontal, maxHorizontal)
-        print(minVertical, maxVertical)
+        # print(minHorizontal, maxHorizontal)
+        # print(minVertical, maxVertical)
 
         if (minVertical == 20 and maxVertical == -1 and \
                 minHorizontal == 20 and maxHorizontal == -1):
@@ -58,6 +58,7 @@ class GetCode:
             if (i != maxHorizontal):
                 r += ",\n "
         r += "]"
+
         print(r)
 
         return True

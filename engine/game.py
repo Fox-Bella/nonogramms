@@ -4,6 +4,7 @@ from engine.square import Square
 from engine.horizontal import Horizontal
 from engine.vertical import Vertical
 from engine.errors.errors import Error
+from engine.font import Font
 
 
 class Game:
@@ -28,6 +29,9 @@ class Game:
         self.width = None
         self.height = None
 
+        # Шрифт
+        self.font = Font()
+
         # Считаем кадры, чтобы разгрузить процессор на проверках
         self.frame = 0
 
@@ -47,7 +51,7 @@ class Game:
         # Самое коряво написанное, но быстрое копирование в Python
         self.fields = [f[:] for f in self.current_map]
 
-        self.size_field = square_game_sizes[min(len(self.fields), len(self.fields[0])) - 1]
+        self.size_field = square_game_sizes[max(len(self.fields), len(self.fields[0])) - 1]
 
         self.i_count_fields = len(self.current_map)
         self.j_count_fields = len(self.current_map[0])
@@ -58,14 +62,11 @@ class Game:
         self.start_x = (795 - self.width) // 2
         self.start_y = (HEIGHT - self.height) // 2 + 100
 
-        self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field)
-        self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field)
+        self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field, self.font)
+        self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field, self.font)
 
         self.start_x = (795 - self.width + self.vertical.width) // 2
         self.start_y = (HEIGHT - self.height - self.horizontal.height) // 2 + 100
-
-        self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field)
-        self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field)
 
         self.end_x = self.start_x + self.size_field * self.j_count_fields
         self.end_y = self.start_y + self.size_field * self.i_count_fields
@@ -80,10 +81,10 @@ class Game:
                                            self.start_y + i * self.size_field,
                                            self.size_field)
                 # Включить, чтобы при загрузке показались все квадраты
-                self.fields[i][j].enabled = self.current_map[i][j]
+                # self.fields[i][j].enabled = self.current_map[i][j]
 
-        self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field)
-        self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field)
+        self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field, self.font)
+        self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field, self.font)
 
         # Из скольки клеток состоят обведённые светлом блоки (3x3, 4x4, 5x5)
         marker = [1, 2, 3, 4, 5]
