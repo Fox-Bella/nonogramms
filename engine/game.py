@@ -1,10 +1,16 @@
+import random
+
 import pygame
+
+import setup
 from setup import *
 from engine.square import Square
 from engine.horizontal import Horizontal
 from engine.vertical import Vertical
 from engine.errors.errors import Error
 from engine.font import Font
+from engine.screen.label_text import LabelText
+from engine.errors.helper import Helper
 
 
 class Game:
@@ -32,6 +38,9 @@ class Game:
         # Шрифт
         self.font = Font()
 
+        # Вывод текстовых меток
+        self.label_text = LabelText(self.font)
+
         # Считаем кадры, чтобы разгрузить процессор на проверках
         self.frame = 0
 
@@ -42,11 +51,16 @@ class Game:
         # Здесь анимация ошибок
         self.errors = []
 
+        # Здесь анимация подсказок
+        self.helper = []
+
         self.start_level()
 
     def start_level(self):
+
         # Текущая карта
         self.current_map = self.maps.level[level].data_level
+
         # Текущая карта с True или False
         # Самое коряво написанное, но быстрое копирование в Python
         self.fields = [f[:] for f in self.current_map]
@@ -117,6 +131,13 @@ class Game:
             return False
         self.fields[i][j].blocked = self.blocked
 
+    def press_mouse_1(self, x, y):
+        if not (self.vertical is None):
+            self.vertical.press_mouse_1(x, y)
+        if not (self.horizontal is None):
+            self.horizontal.press_mouse_1(x, y)
+
+
     def act(self, deltatime, x, y):
         self.frame += 1
         if self.frame > 100000:
@@ -127,11 +148,14 @@ class Game:
         if not (self.horizontal is None):
             self.horizontal.check_mouse(x, y)
 
-    def press_mouse_1(self, x, y):
-        if not (self.vertical is None):
-            self.vertical.press_mouse_1(x, y)
-        if not (self.horizontal is None):
-            self.horizontal.press_mouse_1(x, y)
+        if self.frame % 30 == 0:
+            for i in range(len(self.errors) - 1, -1, -1):
+                if not self.errors[i].enabled:
+                    del self.errors[i]
+
+            for i in range(len(self.helper) - 1, -1, -1):
+                if not self.helper[i].enabled:
+                    del self.helper[i]
 
     # Выводит на экран содержимое всех вложенных объектов классов
     def draw(self, scene: pygame, deltatime):
@@ -140,16 +164,24 @@ class Game:
             for j in range(len(self.fields[i])):
                 self.fields[i][j].drawIJ(scene, j, i, self.i_line_cells, self.j_line_cells)
 
+        # Выводим анимацию ошибок
         if len(self.errors) > 0:
             for err in self.errors:
                 err.draw(scene, deltatime)
 
-        pygame.draw.rect(scene, Square.color_line_outline, (self.start_x - 1, self.start_y - 1,
+        # Выводим клетки-подсказки
+        if len(self.helper) > 0:
+            for hlp in self.helper:
+                hlp.draw(scene, deltatime)
+
+        pygame.draw.rect(scene, Square.color_fill, (self.start_x - 1, self.start_y - 1,
                                                             self.width + 2, self.height + 2), 4)
         if not (self.vertical is None):
             self.vertical.draw(scene)
         if not (self.horizontal is None):
             self.horizontal.draw(scene)
+
+        self.label_text.draw(scene)
 
     # Установка/переключатель заливки/удаления
     def set_filling(self, j, i):
@@ -178,10 +210,33 @@ class Game:
                     self.last_j = j
                     if self.current_map[i][j] == 0:
                         self.errors.append(Error(self.fields[i][j], FPS / 2))
+                        setup.error += 1
                         self.fields[i][j].blocked = True
                         self.fields[i][j].enabled = False
                         self.last_i = -1
                         self.last_j = -1
 
+    # Ищет подсказки: сравнивает каждую выключенную клетку с базой
+    # Если в клетке нужно установить заливку, а её нет, то устанавливает
+    # Количество определяется по формуле: количество незакрашенных клеток / 3, но не менее 1
+    def run_help(self):
+        if len(self.helper) > 0:
+            return False
+        if setup.hint == 0:
+            return False
 
+        clear_fields = []
 
+        for i in range(len(self.current_map)):
+            for j in range(len(self.current_map[i])):
+                if self.current_map[i][j] == 1 and self.fields[i][j].enabled == False:
+                    clear_fields.append([self.fields[i][j], i, j])
+
+        if len(clear_fields) > 0:
+            setup.hint -= 1
+
+            random.shuffle(clear_fields)
+            count = min(max(len(clear_fields) // 3, 1), 3)
+            for i in range(count):
+                self.helper.append(Helper(clear_fields[i][0], setup.FPS // 2))
+                self.fields[clear_fields[i][1]][clear_fields[i][2]].enabled = True

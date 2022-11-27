@@ -25,7 +25,7 @@ class DataLines:
                 self.cells.append(Cell(line[len(line) - i - 1], self.x, self.y - 30 * i, self.size, self.font, self.color))
         elif tpe == DataLines.HORIZONTAL:
             for i in range(len(line)):
-                self.cells.append(Cell(line[len(line) - i - 1], self.x - max(30 * i, self.size // 1.4 * i) - 7, self.y, self.size // 1.0, self.font, self.color))
+                self.cells.append(Cell(line[len(line) - i - 1], self.x - max(30 * i, self.size // 1.4 * i) - 7, self.y, self.size // 1.4, self.font, self.color))
 
     def check_mouse(self, x, y):
         for i in range(len(self.cells)):

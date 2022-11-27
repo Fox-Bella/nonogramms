@@ -38,8 +38,8 @@ class Cell:
 
         if self.print_to_screen == "?":
             pygame.draw.rect(scene, TEXT_LIGHT_ATTENTION,
-                             (self.x + (self.size_field - self.size_field // 2) // 2 , self.y,
-                              self.size_field // 2, 21))
+                             (self.x + (self.size_field - self.size_field // 1.5) // 2 , self.y,
+                              self.size_field // 1.5, 21))
             # srf = self.font.getSystemText(key, f"{self.value}", color=TEXT_COLOR)
             srf = self.font.getSystemText(key, f"{self.print_to_screen}", COLOR_DEEP_GRAY)
             corrX = (self.size_field - srf.get_width()) // 2

@@ -65,9 +65,9 @@ while playGame:
             if pressed_btn == Buttons.CHECK:
                 print("Проверка")
             elif pressed_btn == Buttons.RESTART:
-                pass
+                game.start_level()
             elif pressed_btn == Buttons.HINT:
-                pass
+                game.run_help()
             elif pressed_btn == Buttons.MATH_30:
                 setup.difficulty = 1
                 game.start_level()
@@ -82,7 +82,8 @@ while playGame:
             elif pressed_btn == Buttons.PREV:
                 pass
             elif pressed_btn == Buttons.EXIT:
-                pass
+                setup.save()
+                playGame = False
             elif pressed_btn == Buttons.RESET_GAME:
                 pass
 

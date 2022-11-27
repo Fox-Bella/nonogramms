@@ -22,7 +22,7 @@ class Buttons:
         font = Font()
         self.buttons.append(Button(Buttons.CHECK, 795, 220, ["button_check_deact.png", "button_check_act.png"], "Правильно ли решён сканворд? В случае неудачи увеличиваются ошибки", font))
         self.buttons.append(Button(Buttons.RESTART, 795, 280, ["button_restart_deact.png", "button_restart_act.png"], "Начать раунд заново", font))
-        self.buttons.append(Button(Buttons.HINT, 795, 340, ["button_hint_deact.png", "button_hint_act.png"], "Подсказать случайные клетки", font))
+        self.buttons.append(Button(Buttons.HINT, 795, 340, ["button_hint_deact.png", "button_hint_act.png"], "Подсказать 1-3 случайные клетки", font))
 
         self.buttons.append(Button(Buttons.NEXT, 795, 400, ["button_next_deact.png", "button_next_act.png"], "Следующая головоломка", font))
         self.buttons.append(Button(Buttons.PREV, 795, 430, ["button_prev_deact.png", "button_prev_act.png"], "Предыдущая головоломка", font))
@@ -37,7 +37,16 @@ class Buttons:
     def draw(self, scene, mouse_x, mouse_y, pressable):
         return_id_button = "NONE"
         for btn in self.buttons:
-            res = btn.draw(scene, mouse_x, mouse_y, pressable)
+            if btn.id_button == Buttons.HINT and setup.hint > 0:
+                res = btn.draw(scene, mouse_x, mouse_y, pressable)
+            elif btn.id_button == Buttons.NEXT and setup.level < setup.max_level:
+                res = btn.draw(scene, mouse_x, mouse_y, pressable)
+            elif btn.id_button == Buttons.PREV and setup.max_level > 0:
+                res = btn.draw(scene, mouse_x, mouse_y, pressable)
+            elif btn.id_button != Buttons.HINT and \
+                 btn.id_button != Buttons.NEXT and \
+                 btn.id_button != Buttons.PREV:
+                res = btn.draw(scene, mouse_x, mouse_y, pressable)
             if res != "NONE":
                 return_id_button = res
 
