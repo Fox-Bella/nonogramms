@@ -29,7 +29,7 @@ class Helper:
                              (self.x + 2, self.y + 2, self.size, self.size))
             pygame.draw.rect(scene,
                              Square.color_line_outline,
-                             (self.x + 2, self.y + 2, self.size, self.size), 2)
+                             (self.x + 4, self.y + 4, self.size - 4, self.size - 4), 2)
 
             # self.r += deltatime * 512
             self.g += deltatime * 250

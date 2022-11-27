@@ -63,7 +63,7 @@ class Vertical:
                 tmp.append(cell)
 
         count = int(len(tmp) / 100 * setup.percent_digits[setup.difficulty])
-        print(f"Количество: {len(tmp)} + {count} штук + diff: {setup.difficulty}")
+        # print(f"Количество: {len(tmp)} + {count} штук + diff: {setup.difficulty}")
 
         #tmp = self.cells[:]
         random.shuffle(tmp)

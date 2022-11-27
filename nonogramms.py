@@ -63,7 +63,7 @@ while playGame:
         if mouse_button_pressed_1 == 1 and pressed_btn != "NONE":
             mouse_button_pressed_1 = 0
             if pressed_btn == Buttons.CHECK:
-                print("Проверка")
+                game.check_end_round()
             elif pressed_btn == Buttons.RESTART:
                 game.start_level()
             elif pressed_btn == Buttons.HINT:

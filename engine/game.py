@@ -10,6 +10,7 @@ from engine.vertical import Vertical
 from engine.errors.errors import Error
 from engine.font import Font
 from engine.screen.label_text import LabelText
+from engine.screen.label_text_central import LabelTextCentral
 from engine.errors.helper import Helper
 
 
@@ -48,6 +49,9 @@ class Game:
         self.last_i = -1
         self.last_j = -1
 
+        # Текст по окончании раунда или в случае ошибок
+        self.label_text_central = None
+
         # Здесь анимация ошибок
         self.errors = []
 
@@ -58,8 +62,12 @@ class Game:
 
     def start_level(self):
 
+        # Сбросим надпись
+        if self.label_text_central is not None:
+            self.label_text_central.enabled = False
+
         # Текущая карта
-        self.current_map = self.maps.level[level].data_level
+        self.current_map = self.maps.level[setup.level].data_level
 
         # Текущая карта с True или False
         # Самое коряво написанное, но быстрое копирование в Python
@@ -137,7 +145,6 @@ class Game:
         if not (self.horizontal is None):
             self.horizontal.press_mouse_1(x, y)
 
-
     def act(self, deltatime, x, y):
         self.frame += 1
         if self.frame > 100000:
@@ -148,14 +155,21 @@ class Game:
         if not (self.horizontal is None):
             self.horizontal.check_mouse(x, y)
 
+        # Каждый 30-й кадр проверяем и удаляем неактивное
         if self.frame % 30 == 0:
+            # Удаляем квадраты-ошибки
             for i in range(len(self.errors) - 1, -1, -1):
                 if not self.errors[i].enabled:
                     del self.errors[i]
 
+            # Удаляем квадраты-подсказки
             for i in range(len(self.helper) - 1, -1, -1):
                 if not self.helper[i].enabled:
                     del self.helper[i]
+
+            if not (self.label_text_central is None):
+                if not self.label_text_central.enabled:
+                    self.label_text_central = None
 
     # Выводит на экран содержимое всех вложенных объектов классов
     def draw(self, scene: pygame, deltatime):
@@ -174,14 +188,17 @@ class Game:
             for hlp in self.helper:
                 hlp.draw(scene, deltatime)
 
-        pygame.draw.rect(scene, Square.color_fill, (self.start_x - 1, self.start_y - 1,
-                                                            self.width + 2, self.height + 2), 4)
+        pygame.draw.rect(scene, Square.color_fill, (self.start_x - 3, self.start_y - 3,
+                                                    self.width + 6, self.height + 6), 1)
         if not (self.vertical is None):
             self.vertical.draw(scene)
         if not (self.horizontal is None):
             self.horizontal.draw(scene)
 
         self.label_text.draw(scene)
+
+        if self.label_text_central is not None:
+            self.label_text_central.draw(scene, deltatime)
 
     # Установка/переключатель заливки/удаления
     def set_filling(self, j, i):
@@ -240,3 +257,64 @@ class Game:
             for i in range(count):
                 self.helper.append(Helper(clear_fields[i][0], setup.FPS // 2))
                 self.fields[clear_fields[i][1]][clear_fields[i][2]].enabled = True
+
+    # Нажатие на кнопку "Проверить". Определяет, полностью ли собрана
+    # головоломка или есть какие-то ошибки
+    # В случае ошибок выводит их количество и предупреждение
+    def check_end_round(self):
+        count_clear = 0
+        count_fill = 0
+        count_blocked = 0
+        for i in range(len(self.current_map)):
+            for j in range(len(self.current_map[i])):
+                if self.current_map[i][j] == 1 and not self.fields[i][j].enabled and self.fields[i][j].blocked:
+                    count_blocked += 1
+                elif self.current_map[i][j] == 1 and not self.fields[i][j].enabled:
+                    count_fill += 1
+                elif self.current_map[i][j] == 0 and self.fields[i][j].enabled:
+                    count_clear += 1
+
+        if count_fill + count_clear + count_blocked > 0:
+
+            str_err_fill = self.choosePluralMerge(count_fill, "поле", "поля", "полей")
+            str_err_clear = self.choosePluralMerge(count_clear, "поле", "поля", "полей")
+            str_err_blocked = self.choosePluralMerge(count_blocked, "поле", "поля", "полей")
+
+            string_out = ""
+            if count_blocked > 0:
+                string_out = f"Наобходимо разблокировать {str_err_blocked}"
+            elif count_clear > 0 and count_fill > 0:
+                string_out = f"Необходимо закрасить: {str_err_fill}, а {str_err_clear} очистить"
+            elif count_clear > 0 and count_fill == 0:
+                string_out = f"Необходимо очистить {str_err_clear}"
+            elif count_clear == 0 and count_fill > 0:
+                string_out = f"Необходимо закрасить {str_err_fill}"
+
+            self.label_text_central = LabelTextCentral(setup.HEIGHT - 80, string_out, f"ERR{count_fill + count_clear + count_blocked}",
+                                                       setup.TEXT_LIGHT_BAD,
+                                                       self.font, setup.FPS * 3,
+                                                       2)
+            setup.error += 1
+        else:
+            self.win_round()
+
+    def choosePluralMerge(self, num, case_one, case_two, case_five):
+        s = f"{num} "
+        num = abs(num)
+        if num % 10 == 1 and num % 100 != 11:
+            s += case_one
+        elif num % 10 >= 2 and num % 10 <= 4 and (num % 100 < 10 or num % 100 >= 20):
+            s += case_two
+        else:
+            s += case_five
+
+        return s
+
+
+    def win_round(self):
+        text_win = f'Фигура "{self.maps.level[setup.level].name_level}" собрана! Нажмите "Следующая" для продолжения'
+        self.label_text_central = LabelTextCentral(setup.HEIGHT - 80, text_win, f"TEXTWIN",
+                                                   setup.TEXT_LIGHT_GOOD,
+                                                   self.font, setup.FPS * 10,
+                                                   1)
+        setup.max_level += 1

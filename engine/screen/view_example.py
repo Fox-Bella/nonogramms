@@ -23,12 +23,12 @@ class ViewExample:
                     self.y < y < self.y + self.height:
                 pygame.draw.rect(scene, setup.TEXT_LIGHT_GOOD, (self.x, self.y, self.width, self.height))
                 pygame.draw.rect(scene, Square.color_fill, (self.x, self.y, self.width, self.height), 2)
-                scene.blit(self.font.getBigText(f"BTN{self.value}", f"{self.value}", setup.COLOR_WHITE),
+                scene.blit(self.font.getMediumText(f"BTN{self.value}", f"{self.value}", setup.COLOR_WHITE),
                            (self.x + 9, self.y + 2))
             else:
                 pygame.draw.rect(scene, Square.color, (self.x, self.y, self.width, self.height))
                 pygame.draw.rect(scene, Square.color_fill, (self.x, self.y, self.width, self.height), 2)
-                scene.blit(self.font.getBigText(f"BTN{self.value}", f"{self.value}", setup.COLOR_WHITE),
+                scene.blit(self.font.getMediumText(f"BTN{self.value}", f"{self.value}", setup.COLOR_WHITE),
                            (self.x + 9, self.y + 2))
 
 
@@ -91,7 +91,7 @@ class ViewExample:
 
         pygame.draw.rect(scene, Square.color_line, (self.x, self.y, self.width, self.height))
         pygame.draw.rect(scene, Square.color_fill, (self.x, self.y, self.width, self.height), 5)
-        scene.blit(self.font.getBigText("CAPTION", "Решите пример:", setup.COLOR_WHITE), (self.x + 15, self.y + 10))
+        scene.blit(self.font.getMediumText("CAPTION", "Решите пример:", setup.COLOR_WHITE), (self.x + 15, self.y + 10))
         scene.blit(self.font.getBigText("EXAMPLE", self.msg + self.data_input + cursor, setup.COLOR_YELLOW),
                    (self.x + 15, self.y + 50))
 
