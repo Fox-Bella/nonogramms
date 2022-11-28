@@ -8,17 +8,28 @@ def load():
             s = s.split("=")
             ret[s[0]] = s[1]
     except FileNotFoundError:
-        f = open("setup.dat", "w", encoding="UTF-8")
-        f.write("level=0\n")
-        f.write("max_level=0\n")
-        f.write(f"error=0\n")
-        f.write(f"difficulty=0\n")
-        f.write(f"hint=5\n")
-        f.close()
-        ret = load()
+        reset()
 
     return ret
 
+def reset():
+    f = open("setup.dat", "w", encoding="UTF-8")
+    f.write("level=0\n")
+    f.write("max_level=0\n")
+    f.write(f"error=0\n")
+    f.write(f"difficulty=0\n")
+    f.write(f"hint=5\n")
+    f.close()
+    set_data()
+
+def set_data():
+    global level, max_level, difficulty, error, hint
+    dataload = load()
+    level = int(dataload["level"])
+    max_level = int(dataload["max_level"])
+    difficulty = int(dataload["difficulty"])
+    error = int(dataload["error"])
+    hint = int(dataload["hint"])
 
 def save():
     f = open("setup.dat", "w", encoding="UTF-8")
@@ -51,6 +62,7 @@ TEXT_LIGHT_GOOD = "#37A737"
 TEXT_LIGHT_ATTENTION = "#936d36"
 
 COLOR_WHITE = "#EFEFEF"
+COLOR_GRAY = "#A7A7A7"
 COLOR_DEEP_GRAY = "#373737"
 COLOR_YELLOW = "#FFFF00"
 COLOR_YELLOW_DARK = "#9d933a"
@@ -60,12 +72,12 @@ square_game_sizes = []
 for i in range(20):
     square_game_sizes.append(int(60 - i * 2.2))
 
-dataload = load()
-level = int(dataload["level"])
-max_level = int(dataload["max_level"])
-difficulty = int(dataload["difficulty"])
-error = int(dataload["error"])
-hint = int(dataload["hint"])
+level = None
+max_level = None
+difficulty = None
+error = None
+hint = None
+set_data()
 
 view_example = None
 

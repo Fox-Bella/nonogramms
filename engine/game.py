@@ -64,7 +64,10 @@ class Game:
 
         # Сбросим надпись
         if self.label_text_central is not None:
-            self.label_text_central.enabled = False
+            for i in range(len(self.label_text_central) - 1, -1, -1):
+                del self.label_text_central[i]
+
+        self.label_text_central = []
 
         # Текущая карта
         self.current_map = self.maps.level[setup.level].data_level
@@ -168,8 +171,9 @@ class Game:
                     del self.helper[i]
 
             if not (self.label_text_central is None):
-                if not self.label_text_central.enabled:
-                    self.label_text_central = None
+                for i in range(len(self.label_text_central) - 1, -1, -1):
+                    if not self.label_text_central[i].enabled:
+                        del self.label_text_central[i]
 
     # Выводит на экран содержимое всех вложенных объектов классов
     def draw(self, scene: pygame, deltatime):
@@ -198,7 +202,8 @@ class Game:
         self.label_text.draw(scene)
 
         if self.label_text_central is not None:
-            self.label_text_central.draw(scene, deltatime)
+            for ltc in self.label_text_central:
+                ltc.draw(scene, deltatime)
 
     # Установка/переключатель заливки/удаления
     def set_filling(self, j, i):
@@ -290,10 +295,10 @@ class Game:
             elif count_clear == 0 and count_fill > 0:
                 string_out = f"Необходимо закрасить {str_err_fill}"
 
-            self.label_text_central = LabelTextCentral(setup.HEIGHT - 80, string_out, f"ERR{count_fill + count_clear + count_blocked}",
+            self.label_text_central.append(LabelTextCentral(setup.HEIGHT - 80, string_out, f"ERR{count_fill + count_clear + count_blocked}",
                                                        setup.TEXT_LIGHT_BAD,
                                                        self.font, setup.FPS * 3,
-                                                       2)
+                                                       2))
             setup.error += 1
         else:
             self.win_round()
@@ -312,9 +317,16 @@ class Game:
 
 
     def win_round(self):
-        text_win = f'Фигура "{self.maps.level[setup.level].name_level}" собрана! Нажмите "Следующая" для продолжения'
-        self.label_text_central = LabelTextCentral(setup.HEIGHT - 80, text_win, f"TEXTWIN",
-                                                   setup.TEXT_LIGHT_GOOD,
+        text_win = 'Выберите пункт "Следующая" для продолжения'
+        self.label_text_central.append(LabelTextCentral(setup.HEIGHT - 70, text_win, f"TEXTWIN",
+                                                   setup.COLOR_GRAY,
                                                    self.font, setup.FPS * 10,
-                                                   1)
-        setup.max_level += 1
+                                                   1))
+
+        text_name_level = f'"{self.maps.level[setup.level].name_level}"'
+        self.label_text_central.append(LabelTextCentral(setup.HEIGHT - 110, text_name_level, f"TEXTNAME",
+                                                        setup.TEXT_LIGHT_GOOD,
+                                                        self.font, setup.FPS * 20,
+                                                        2))
+
+        setup.max_level = max(setup.level + 1, setup.max_level)

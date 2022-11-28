@@ -1,7 +1,7 @@
 import setup
 from setup import *
-# from data.add_map import AddMap
-from data.add_map23456790 import AddMap
+from data.add_map import AddMap
+# from data.add_map23456790 import AddMap
 from engine.game import Game
 from engine.buttons.buttons import Buttons
 import pygame
@@ -78,14 +78,22 @@ while playGame:
                 setup.difficulty = 0
                 game.start_level()
             elif pressed_btn == Buttons.NEXT:
-                pass
+                setup.level += 1
+                if setup.level == len(game.maps.level) or setup.level == setup.max_level + 1:
+                    setup.level -= 1
+                game.start_level()
             elif pressed_btn == Buttons.PREV:
-                pass
+                setup.level -= 1
+                if setup.level < 0:
+                    setup.level = 0
+                else:
+                    game.start_level()
             elif pressed_btn == Buttons.EXIT:
                 setup.save()
                 playGame = False
             elif pressed_btn == Buttons.RESET_GAME:
-                pass
+                setup.reset()
+                game.start_level()
 
     pygame.display.flip()
 
@@ -99,3 +107,6 @@ while playGame:
     game.act(deltatime, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
     deltatime = clock.tick(FPS) / 1000
+
+pygame.quit()
+setup.save()

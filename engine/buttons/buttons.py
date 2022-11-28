@@ -41,7 +41,7 @@ class Buttons:
                 res = btn.draw(scene, mouse_x, mouse_y, pressable)
             elif btn.id_button == Buttons.NEXT and setup.level < setup.max_level:
                 res = btn.draw(scene, mouse_x, mouse_y, pressable)
-            elif btn.id_button == Buttons.PREV and setup.max_level > 0:
+            elif btn.id_button == Buttons.PREV and setup.level > 0:
                 res = btn.draw(scene, mouse_x, mouse_y, pressable)
             elif btn.id_button != Buttons.HINT and \
                  btn.id_button != Buttons.NEXT and \
