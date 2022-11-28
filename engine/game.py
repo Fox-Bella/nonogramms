@@ -114,7 +114,7 @@ class Game:
                                            self.start_y + i * self.size_field,
                                            self.size_field)
                 # Включить, чтобы при загрузке показались все квадраты
-                self.fields[i][j].enabled = self.current_map[i][j]
+                # self.fields[i][j].enabled = self.current_map[i][j]
 
         self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field, self.font)
         self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field, self.font)
