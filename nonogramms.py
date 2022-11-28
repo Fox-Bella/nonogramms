@@ -60,6 +60,10 @@ while playGame:
         setup.view_example.draw(scene)
     else:
         pressed_btn = buttons.draw(scene, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], True)
+
+        if pressed_btn == Buttons.AUTHORS:
+            game.draw_authors(scene, deltatime)
+
         if mouse_button_pressed_1 == 1 and pressed_btn != "NONE":
             mouse_button_pressed_1 = 0
             if pressed_btn == Buttons.CHECK:

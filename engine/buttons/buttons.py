@@ -16,6 +16,7 @@ class Buttons:
     PREV = 7
     EXIT = 8
     RESET_GAME = 9
+    AUTHORS = 10
 
     def __init__(self):
         self.buttons = []
@@ -33,6 +34,8 @@ class Buttons:
         self.buttons_difficulty.append(Button(Buttons.MATH_30, 795, 310, ["button_math30_deact.png", "button_math30_act.png"], "Треть чисел скрыта выражениями", font))
         self.buttons_difficulty.append(Button(Buttons.MATH_60, 795, 310, ["button_math60_deact.png", "button_math60_act.png"], "Скрыто выражениями чуть больше половины чисел", font))
         self.buttons_difficulty.append(Button(Buttons.MATH_100, 795, 310, ["button_math100_deact.png", "button_math100_act.png"], "Все числа представлены выражениями", font))
+
+        self.buttons.append(Button(Buttons.AUTHORS, 795, setup.HEIGHT - 40, ["button_authors_deact.png", "button_authors_act.png"], "", font))
 
     def draw(self, scene, mouse_x, mouse_y, pressable):
         return_id_button = "NONE"

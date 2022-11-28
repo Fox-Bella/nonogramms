@@ -12,6 +12,7 @@ from engine.font import Font
 from engine.screen.label_text import LabelText
 from engine.screen.label_text_central import LabelTextCentral
 from engine.errors.helper import Helper
+from engine.screen.authors_text import AuthorsText
 
 
 class Game:
@@ -39,6 +40,9 @@ class Game:
 
         # Шрифт
         self.font = Font()
+
+        # Вывод авторов
+        self.authors = AuthorsText(self.font)
 
         # Вывод текстовых меток
         self.label_text = LabelText(self.font)
@@ -365,3 +369,5 @@ class Game:
                         self.end_round_effect.append(Helper(self.fields[self.i_count_fields - 1 - i][j], pause, int(count), 0, 100, 0))
                         count += increment
 
+    def draw_authors(self, scene, deltatime):
+        self.authors.draw(scene, deltatime)
