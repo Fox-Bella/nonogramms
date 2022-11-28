@@ -35,6 +35,7 @@ class Game:
         self.blocked = True
         self.width = None
         self.height = None
+        self.end_round_effect = None
 
         # Шрифт
         self.font = Font()
@@ -60,14 +61,18 @@ class Game:
 
         self.start_level()
 
+    def clear_lists(self, l):
+        if l is not None:
+            for i in range(len(l) - 1, -1, -1):
+                del l[i]
+        return []
+
     def start_level(self):
 
         # Сбросим надпись
-        if self.label_text_central is not None:
-            for i in range(len(self.label_text_central) - 1, -1, -1):
-                del self.label_text_central[i]
-
-        self.label_text_central = []
+        self.label_text_central = self.clear_lists(self.label_text_central)
+        # Сбросим эффекты, если они были
+        self.end_round_effect = self.clear_lists(self.end_round_effect)
 
         # Текущая карта
         self.current_map = self.maps.level[setup.level].data_level
@@ -76,11 +81,14 @@ class Game:
         # Самое коряво написанное, но быстрое копирование в Python
         self.fields = [f[:] for f in self.current_map]
 
+        # Определение размера клетки в зависимости от их количества в окне
         self.size_field = square_game_sizes[max(len(self.fields), len(self.fields[0])) - 1]
 
+        # Ширина и высота (в клетках) матрицы поля
         self.i_count_fields = len(self.current_map)
         self.j_count_fields = len(self.current_map[0])
 
+        # Общая ширина и высота поля
         self.width = self.j_count_fields * self.size_field
         self.height = self.i_count_fields * self.size_field
 
@@ -97,7 +105,7 @@ class Game:
         self.end_y = self.start_y + self.size_field * self.i_count_fields
 
         # 780 - это граница, где начинаются кнопки
-        # self.start_y = (750 - self.horizontal.height - self.width) // 2
+        self.start_y = (setup.HEIGHT - self.height + 50) // 2
         # self.start_x = (HEIGHT - self.vertical.width - self.height) // 2 + 100
 
         for i in range(len(self.fields)):
@@ -106,7 +114,7 @@ class Game:
                                            self.start_y + i * self.size_field,
                                            self.size_field)
                 # Включить, чтобы при загрузке показались все квадраты
-                # self.fields[i][j].enabled = self.current_map[i][j]
+                self.fields[i][j].enabled = self.current_map[i][j]
 
         self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field, self.font)
         self.vertical = Vertical(self.current_map, self.start_x, self.start_y, self.size_field, self.font)
@@ -175,12 +183,21 @@ class Game:
                     if not self.label_text_central[i].enabled:
                         del self.label_text_central[i]
 
+            if not (self.end_round_effect is None):
+                for i in range(len(self.end_round_effect) - 1, -1, -1):
+                    if not self.end_round_effect[i].enabled:
+                        del self.end_round_effect[i]
+
     # Выводит на экран содержимое всех вложенных объектов классов
     def draw(self, scene: pygame, deltatime):
 
         for i in range(len(self.fields)):
             for j in range(len(self.fields[i])):
                 self.fields[i][j].drawIJ(scene, j, i, self.i_line_cells, self.j_line_cells)
+
+        if self.end_round_effect is not None:
+            for eff in self.end_round_effect:
+                eff.draw(scene, deltatime)
 
         # Выводим анимацию ошибок
         if len(self.errors) > 0:
@@ -330,3 +347,21 @@ class Game:
                                                         2))
 
         setup.max_level = max(setup.level + 1, setup.max_level)
+
+        if len(self.end_round_effect) > 300:
+            return False
+
+        count = 0
+        pause = setup.FPS
+        increment = setup.FPS / 30
+        for j in range(self.j_count_fields):
+            for i in range(self.i_count_fields):
+                if j % 2 == 0:
+                    if self.current_map[i][j] == 1:
+                        self.end_round_effect.append(Helper(self.fields[i][j], pause, int(count), 0, 100, 0))
+                        count += increment
+                else:
+                    if self.current_map[self.i_count_fields - 1 - i][j] == 1:
+                        self.end_round_effect.append(Helper(self.fields[self.i_count_fields - 1 - i][j], pause, int(count), 0, 100, 0))
+                        count += increment
+
