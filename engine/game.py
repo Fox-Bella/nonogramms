@@ -117,7 +117,7 @@ class Game:
                 self.fields[i][j] = Square(self.start_x + j * self.size_field,
                                            self.start_y + i * self.size_field,
                                            self.size_field)
-                # Включить, чтобы при загрузке показались все квадраты
+                # Раскомментировать, чтобы при загрузке показались все квадраты
                 # self.fields[i][j].enabled = self.current_map[i][j]
 
         self.horizontal = Horizontal(self.current_map, self.start_x, self.start_y, self.size_field, self.font)
@@ -357,17 +357,27 @@ class Game:
 
         count = 0
         pause = setup.FPS
+        line = 0
         increment = setup.FPS / 30
         for j in range(self.j_count_fields):
             for i in range(self.i_count_fields):
-                if j % 2 == 0:
+                if line % 2 == 0:
                     if self.current_map[i][j] == 1:
                         self.end_round_effect.append(Helper(self.fields[i][j], pause, int(count), 0, 100, 0))
+                        count += increment
+
+                    if self.current_map[self.i_count_fields - 1 - i][self.j_count_fields - 1 - j] == 1:
+                        self.end_round_effect.append(Helper(self.fields[self.i_count_fields - 1 - i][self.j_count_fields - 1 - j], pause, int(count), 0, 100, 0))
                         count += increment
                 else:
                     if self.current_map[self.i_count_fields - 1 - i][j] == 1:
                         self.end_round_effect.append(Helper(self.fields[self.i_count_fields - 1 - i][j], pause, int(count), 0, 100, 0))
                         count += increment
+
+                    if self.current_map[i][self.j_count_fields - 1 - j] == 1:
+                        self.end_round_effect.append(Helper(self.fields[i][self.j_count_fields - 1 - j], pause, int(count), 0, 100, 0))
+                        count += increment
+            line += 1
 
     def draw_authors(self, scene, deltatime):
         self.authors.draw(scene, deltatime)
