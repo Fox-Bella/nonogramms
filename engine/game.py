@@ -137,8 +137,9 @@ class Game:
                 i < self.start_y or i >= self.end_y):
             return -1, -1
 
-        i = (i - self.start_y) // self.size_field
-        j = (j - self.start_x) // self.size_field
+        i = min(len(self.fields) - 1, (i - self.start_y) // self.size_field)
+        j = min(len(self.fields[0]) - 1, (j - self.start_x) // self.size_field)
+
         return j, i
 
     def set_blocked(self, j, i):
@@ -240,6 +241,8 @@ class Game:
         j, i = self.getCoord(j, i)
         if j == -1 and i == -1:
             return False
+
+        print(j, i)
 
         if self.fields[i][j].blocked:
             return False
