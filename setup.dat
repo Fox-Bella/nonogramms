@@ -1,5 +1,5 @@
-level=0
-max_level=20
-error=4
+level=10
+max_level=10
+error=6
 difficulty=0
-hint=0
+hint=5
