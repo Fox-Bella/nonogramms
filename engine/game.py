@@ -242,8 +242,6 @@ class Game:
         if j == -1 and i == -1:
             return False
 
-        print(j, i)
-
         if self.fields[i][j].blocked:
             return False
 

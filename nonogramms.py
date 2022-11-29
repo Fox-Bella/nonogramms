@@ -4,11 +4,12 @@ from data.add_map import AddMap
 # from data.add_map23456790 import AddMap
 from engine.game import Game
 from engine.buttons.buttons import Buttons
+from sound.sound import Sound
 import pygame
 
 # Добавить чтобы работал pygame
 pygame.init()
-pygame.display.set_caption("Матемонские японворды // Математика + Японский сканворд")
+pygame.display.set_caption("СКАН-МАТИК / Японские сканворды с математикой")
 size = [WIDTH, HEIGHT]
 scene = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
@@ -18,6 +19,7 @@ deltatime = 0
 maps = AddMap()
 game = Game(maps)
 buttons = Buttons()
+sound = Sound(pygame)
 
 mouse_button_pressed_1 = 0
 mouse_button_pressed_3 = 0
