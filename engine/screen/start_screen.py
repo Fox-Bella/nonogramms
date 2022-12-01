@@ -13,7 +13,7 @@ class StartScreen:
     def draw(self, scene, deltatime):
 
         if self.frame < FPS * 1.5:
-            self.frame += 1
+            self.frame += FPS * deltatime
         else:
             self.alpha -= 255 * deltatime / 2
 
