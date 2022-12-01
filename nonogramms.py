@@ -24,7 +24,7 @@ sound = Sound(pygame)
 mouse_button_pressed_1 = 0
 mouse_button_pressed_3 = 0
 
-sound.play(Sound.CLICK)
+sound.play(Sound.COMPLEXITY)
 
 while playGame:
     for event in pygame.event.get():
