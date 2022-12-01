@@ -13,12 +13,18 @@ from engine.screen.label_text import LabelText
 from engine.screen.label_text_central import LabelTextCentral
 from engine.errors.helper import Helper
 from engine.screen.authors_text import AuthorsText
+from sound.sound import Sound
 
 
 class Game:
 
-    def __init__(self, maps):
+    PLAY_GAME = 0
+    END_GAME = 1
+
+    def __init__(self, maps, sound):
+        self.gamestate = Game.PLAY_GAME
         self.maps = maps
+        self.sound = sound
         self.current_map = None
         self.fields = None
         self.i_line_cells = None
@@ -196,30 +202,35 @@ class Game:
     # Выводит на экран содержимое всех вложенных объектов классов
     def draw(self, scene: pygame, deltatime):
 
-        for i in range(len(self.fields)):
-            for j in range(len(self.fields[i])):
-                self.fields[i][j].drawIJ(scene, j, i, self.i_line_cells, self.j_line_cells)
+        if self.gamestate == Game.PLAY_GAME:
 
-        if self.end_round_effect is not None:
-            for eff in self.end_round_effect:
-                eff.draw(scene, deltatime)
+            for i in range(len(self.fields)):
+                for j in range(len(self.fields[i])):
+                    self.fields[i][j].drawIJ(scene, j, i, self.i_line_cells, self.j_line_cells)
 
-        # Выводим анимацию ошибок
-        if len(self.errors) > 0:
-            for err in self.errors:
-                err.draw(scene, deltatime)
+            if self.end_round_effect is not None:
+                for eff in self.end_round_effect:
+                    eff.draw(scene, deltatime)
 
-        # Выводим клетки-подсказки
-        if len(self.helper) > 0:
-            for hlp in self.helper:
-                hlp.draw(scene, deltatime)
+            # Выводим анимацию ошибок
+            if len(self.errors) > 0:
+                for err in self.errors:
+                    err.draw(scene, deltatime)
 
-        pygame.draw.rect(scene, Square.color_fill, (self.start_x - 3, self.start_y - 3,
-                                                    self.width + 6, self.height + 6), 1)
-        if not (self.vertical is None):
-            self.vertical.draw(scene)
-        if not (self.horizontal is None):
-            self.horizontal.draw(scene)
+            # Выводим клетки-подсказки
+            if len(self.helper) > 0:
+                for hlp in self.helper:
+                    hlp.draw(scene, deltatime)
+
+            pygame.draw.rect(scene, Square.color_fill, (self.start_x - 3, self.start_y - 3,
+                                                        self.width + 6, self.height + 6), 1)
+            if not (self.vertical is None):
+                self.vertical.draw(scene)
+            if not (self.horizontal is None):
+                self.horizontal.draw(scene)
+
+        elif self.gamestate == Game.END_GAME:
+            pass
 
         self.label_text.draw(scene)
 
@@ -253,12 +264,15 @@ class Game:
                     self.last_i = i
                     self.last_j = j
                     if self.current_map[i][j] == 0:
+                        self.sound.play(Sound.CLICK_BAD)
                         self.errors.append(Error(self.fields[i][j], FPS / 2))
                         setup.error += 1
                         self.fields[i][j].blocked = True
                         self.fields[i][j].enabled = False
                         self.last_i = -1
                         self.last_j = -1
+                        if setup.error >= 8:
+                            self.gamestate = Game.END_GAME
 
     # Ищет подсказки: сравнивает каждую выключенную клетку с базой
     # Если в клетке нужно установить заливку, а её нет, то устанавливает
@@ -323,6 +337,7 @@ class Game:
                                                        2))
             setup.error += 1
         else:
+            self.sound.play(Sound.UP_OR_DOWN)
             self.win_round()
 
     def choosePluralMerge(self, num, case_one, case_two, case_five):

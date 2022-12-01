@@ -5,6 +5,7 @@ from data.add_map import AddMap
 from engine.game import Game
 from engine.buttons.buttons import Buttons
 from sound.sound import Sound
+from engine.screen.start_screen import StartScreen
 import pygame
 
 # Добавить чтобы работал pygame
@@ -17,14 +18,16 @@ playGame = True
 deltatime = 0
 
 maps = AddMap()
-game = Game(maps)
 buttons = Buttons()
 sound = Sound(pygame)
+game = Game(maps, sound)
 
 mouse_button_pressed_1 = 0
 mouse_button_pressed_3 = 0
 
-sound.play(Sound.COMPLEXITY)
+start_screen = StartScreen()
+
+sound.play(Sound.START_PLAY_GAME)
 
 while playGame:
     for event in pygame.event.get():
@@ -37,10 +40,12 @@ while playGame:
         if setup.view_example is None:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if mouse_button_pressed_1 == 0 and event.button == 1:
+                    sound.play(Sound.CLICK)
                     game.press_mouse_1(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
                     game.set_filling(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
                 if mouse_button_pressed_3 == 0 and event.button == 3:
+                    sound.play(Sound.CLICK)
                     game.set_blocked(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
                 mouse_button_pressed_1 = event.button
@@ -56,7 +61,7 @@ while playGame:
                 if event.button == 1:
                     setup.view_example.press_mouse_button_1(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
 
-    scene.fill((0, 0, 0))
+    scene.fill("#1c3055")
     game.draw(scene, deltatime)
 
     if not (setup.view_example is None):
@@ -71,26 +76,34 @@ while playGame:
         if mouse_button_pressed_1 == 1 and pressed_btn != "NONE":
             mouse_button_pressed_1 = 0
             if pressed_btn == Buttons.CHECK:
+                sound.play(Sound.CLICK)
                 game.check_end_round()
             elif pressed_btn == Buttons.RESTART:
+                sound.play(Sound.CLICK)
                 game.start_level()
             elif pressed_btn == Buttons.HINT:
+                sound.play(Sound.HELP)
                 game.run_help()
             elif pressed_btn == Buttons.MATH_30:
+                sound.play(Sound.COMPLEXITY)
                 setup.difficulty = 1
                 game.start_level()
             elif pressed_btn == Buttons.MATH_60:
+                sound.play(Sound.COMPLEXITY)
                 setup.difficulty = 2
                 game.start_level()
             elif pressed_btn == Buttons.MATH_100:
+                sound.play(Sound.COMPLEXITY)
                 setup.difficulty = 0
                 game.start_level()
             elif pressed_btn == Buttons.NEXT:
+                sound.play(Sound.CLICK)
                 setup.level += 1
                 if setup.level == len(game.maps.level) or setup.level == setup.max_level + 1:
                     setup.level -= 1
                 game.start_level()
             elif pressed_btn == Buttons.PREV:
+                sound.play(Sound.CLICK)
                 setup.level -= 1
                 if setup.level < 0:
                     setup.level = 0
@@ -100,8 +113,12 @@ while playGame:
                 setup.save()
                 playGame = False
             elif pressed_btn == Buttons.RESET_GAME:
+                sound.play(Sound.CLICK)
                 setup.reset()
                 game.start_level()
+
+    if start_screen.alpha > 0:
+        start_screen.draw(scene, deltatime)
 
     pygame.display.flip()
 
