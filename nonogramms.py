@@ -26,8 +26,10 @@ mouse_button_pressed_1 = 0
 mouse_button_pressed_3 = 0
 
 start_screen = StartScreen()
-
-sound.play(Sound.START_PLAY_GAME)
+if setup.error < 8:
+    sound.play(Sound.START_PLAY_GAME)
+else:
+    start_screen.enabled = False
 
 while playGame:
     for event in pygame.event.get():
@@ -37,8 +39,9 @@ while playGame:
             if event.key == pygame.K_ESCAPE:
                 playGame = False
         # Если нет класса с выведенным примером для решения
+        # и закончилась экранная заставка
         if setup.view_example is None:
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and not start_screen.enabled:
                 if mouse_button_pressed_1 == 0 and event.button == 1:
                     sound.play(Sound.CLICK)
                     game.press_mouse_1(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
@@ -64,10 +67,10 @@ while playGame:
     scene.fill("#1c3055")
     game.draw(scene, deltatime)
 
-    if not (setup.view_example is None):
+    if setup.view_example is not None:
         buttons.draw(scene, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], False)
         setup.view_example.draw(scene)
-    else:
+    elif not start_screen.enabled:
         pressed_btn = buttons.draw(scene, pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1], True)
 
         if pressed_btn == Buttons.AUTHORS:
@@ -115,6 +118,7 @@ while playGame:
             elif pressed_btn == Buttons.RESET_GAME:
                 sound.play(Sound.CLICK)
                 setup.reset()
+                game.gamestate = Game.PLAY_GAME
                 game.start_level()
 
     if start_screen.alpha > 0:

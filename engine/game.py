@@ -14,15 +14,20 @@ from engine.screen.label_text_central import LabelTextCentral
 from engine.errors.helper import Helper
 from engine.screen.authors_text import AuthorsText
 from sound.sound import Sound
+from engine.screen.final_text import FinalText
 
 
 class Game:
-
     PLAY_GAME = 0
     END_GAME = 1
+    WIN_GAME = 2
 
     def __init__(self, maps, sound):
         self.gamestate = Game.PLAY_GAME
+
+        # Текст с картинкой для победы или поражения
+        self.final_text = None
+
         self.maps = maps
         self.sound = sound
         self.current_map = None
@@ -78,6 +83,8 @@ class Game:
         return []
 
     def start_level(self):
+
+        self.final_text = None
 
         # Сбросим надпись
         self.label_text_central = self.clear_lists(self.label_text_central)
@@ -137,6 +144,9 @@ class Game:
         for j in marker:
             if len(self.fields) % j == 0:
                 self.j_line_cells = j
+
+        if setup.error >= 8:
+            self.end_game()
 
     def getCoord(self, j, i):
         if (j < self.start_x or j >= self.end_x or
@@ -202,6 +212,7 @@ class Game:
     # Выводит на экран содержимое всех вложенных объектов классов
     def draw(self, scene: pygame, deltatime):
 
+        """ ***** ИГРА ***********************************************************************"""
         if self.gamestate == Game.PLAY_GAME:
 
             for i in range(len(self.fields)):
@@ -229,7 +240,13 @@ class Game:
             if not (self.horizontal is None):
                 self.horizontal.draw(scene)
 
+            """ ***** ПРОИГРЫШ *******************************************************************"""
         elif self.gamestate == Game.END_GAME:
+            if self.final_text is not None:
+                self.final_text.draw(scene, deltatime)
+
+            """ ***** ПОБЕДА *********************************************************************"""
+        elif self.gamestate == Game.WIN_GAME:
             pass
 
         self.label_text.draw(scene)
@@ -272,7 +289,8 @@ class Game:
                         self.last_i = -1
                         self.last_j = -1
                         if setup.error >= 8:
-                            self.gamestate = Game.END_GAME
+                            # Удаляем квадраты-ошибки
+                            self.end_game()
 
     # Ищет подсказки: сравнивает каждую выключенную клетку с базой
     # Если в клетке нужно установить заливку, а её нет, то устанавливает
@@ -331,11 +349,15 @@ class Game:
             elif count_clear == 0 and count_fill > 0:
                 string_out = f"Необходимо закрасить {str_err_fill}"
 
-            self.label_text_central.append(LabelTextCentral(setup.HEIGHT - 80, string_out, f"ERR{count_fill + count_clear + count_blocked}",
-                                                       setup.TEXT_LIGHT_BAD,
-                                                       self.font, setup.FPS * 3,
-                                                       2))
+            self.label_text_central.append(
+                LabelTextCentral(setup.HEIGHT - 80, string_out, f"ERR{count_fill + count_clear + count_blocked}",
+                                 setup.TEXT_LIGHT_BAD,
+                                 self.font, setup.FPS * 3,
+                                 2))
+            self.sound.play(Sound.CLICK_BAD)
             setup.error += 1
+            if setup.error >= 8:
+                self.end_game()
         else:
             self.sound.play(Sound.UP_OR_DOWN)
             self.win_round()
@@ -352,21 +374,26 @@ class Game:
 
         return s
 
-
     def win_round(self):
-        text_win = 'Выберите пункт "Следующая" для продолжения'
-        self.label_text_central.append(LabelTextCentral(setup.HEIGHT - 70, text_win, f"TEXTWIN",
-                                                   setup.COLOR_GRAY,
-                                                   self.font, setup.FPS * 10,
-                                                   1))
-
-        text_name_level = f'"{self.maps.level[setup.level].name_level}"'
-        self.label_text_central.append(LabelTextCentral(setup.HEIGHT - 110, text_name_level, f"TEXTNAME",
-                                                        setup.TEXT_LIGHT_GOOD,
-                                                        self.font, setup.FPS * 20,
-                                                        2))
 
         setup.max_level = max(setup.level + 1, setup.max_level)
+        setup.max_level = min(setup.max_level, len(self.maps.level) - 1)
+
+        if setup.level + 1 == len(self.maps.level):
+            self.gamestate = Game.WIN_GAME
+        else:
+
+            text_win = 'Выберите пункт "Следующая" для продолжения'
+            self.label_text_central.append(LabelTextCentral(setup.HEIGHT - 70, text_win, f"TEXTWIN",
+                                                            setup.COLOR_GRAY,
+                                                            self.font, setup.FPS * 10,
+                                                            1))
+
+            text_name_level = f'"{self.maps.level[setup.level].name_level}"'
+            self.label_text_central.append(LabelTextCentral(setup.HEIGHT - 110, text_name_level, f"TEXTNAME",
+                                                            setup.TEXT_LIGHT_GOOD,
+                                                            self.font, setup.FPS * 20,
+                                                            2))
 
         if len(self.end_round_effect) > 300:
             return False
@@ -383,17 +410,50 @@ class Game:
                         count += increment
 
                     if self.current_map[self.i_count_fields - 1 - i][self.j_count_fields - 1 - j] == 1:
-                        self.end_round_effect.append(Helper(self.fields[self.i_count_fields - 1 - i][self.j_count_fields - 1 - j], pause, int(count), 0, 100, 0))
+                        self.end_round_effect.append(
+                            Helper(self.fields[self.i_count_fields - 1 - i][self.j_count_fields - 1 - j], pause,
+                                   int(count), 0, 100, 0))
                         count += increment
                 else:
                     if self.current_map[self.i_count_fields - 1 - i][j] == 1:
-                        self.end_round_effect.append(Helper(self.fields[self.i_count_fields - 1 - i][j], pause, int(count), 0, 100, 0))
+                        self.end_round_effect.append(
+                            Helper(self.fields[self.i_count_fields - 1 - i][j], pause, int(count), 0, 100, 0))
                         count += increment
 
                     if self.current_map[i][self.j_count_fields - 1 - j] == 1:
-                        self.end_round_effect.append(Helper(self.fields[i][self.j_count_fields - 1 - j], pause, int(count), 0, 100, 0))
+                        self.end_round_effect.append(
+                            Helper(self.fields[i][self.j_count_fields - 1 - j], pause, int(count), 0, 100, 0))
                         count += increment
             line += 1
 
     def draw_authors(self, scene, deltatime):
         self.authors.draw(scene, deltatime)
+
+    # Конец игры / Ошибки
+    def end_game(self):
+        if self.errors is not None:
+            for i in range(len(self.errors) - 1, -1, -1):
+                del self.errors[i]
+        self.errors = []
+
+        # Удаляем квадраты-подсказки
+        if self.helper is not None:
+            for i in range(len(self.helper) - 1, -1, -1):
+                del self.helper[i]
+        self.helper = []
+
+        if self.label_text_central is not None:
+            for i in range(len(self.label_text_central) - 1, -1, -1):
+                del self.label_text_central[i]
+        self.label_text_central = []
+
+        if self.end_round_effect is not None:
+            for i in range(len(self.end_round_effect) - 1, -1, -1):
+                del self.end_round_effect[i]
+        self.end_round_effect = []
+
+        self.sound.play(Sound.GAME_OVER)
+        self.final_text = FinalText("Жаль, но вы проиграли...", "Вы допустили 8 ошибок. Нажмите \"Сбросить прогресс\" "
+                                                                "чтобы начать заново",
+                                    "png/game_over_cat.png", self.font, 0, 795)
+        self.gamestate = Game.END_GAME

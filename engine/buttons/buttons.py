@@ -21,7 +21,7 @@ class Buttons:
     def __init__(self):
         self.buttons = []
         font = Font()
-        self.buttons.append(Button(Buttons.CHECK, 795, 220, ["button_check_deact.png", "button_check_act.png"], "Правильно ли решён сканворд? В случае неудачи увеличиваются ошибки", font))
+        self.buttons.append(Button(Buttons.CHECK, 795, 220, ["button_check_deact.png", "button_check_act.png"], "Правильно ли решено? Если нет, то увеличатся ошибки", font))
         self.buttons.append(Button(Buttons.RESTART, 795, 280, ["button_restart_deact.png", "button_restart_act.png"], "Начать раунд заново", font))
         self.buttons.append(Button(Buttons.HINT, 795, 340, ["button_hint_deact.png", "button_hint_act.png"], "Подсказать 1-3 случайные клетки", font))
 
@@ -35,25 +35,31 @@ class Buttons:
         self.buttons_difficulty.append(Button(Buttons.MATH_60, 795, 310, ["button_math60_deact.png", "button_math60_act.png"], "Скрыто выражениями чуть больше половины чисел", font))
         self.buttons_difficulty.append(Button(Buttons.MATH_100, 795, 310, ["button_math100_deact.png", "button_math100_act.png"], "Все числа представлены выражениями", font))
 
-        self.buttons.append(Button(Buttons.AUTHORS, 795, setup.HEIGHT - 40, ["button_authors_deact.png", "button_authors_act.png"], "", font))
+        self.buttons.append(Button(Buttons.AUTHORS, 795, setup.HEIGHT - 40, ["button_authors_deact.png", "button_authors_act.png"], "Те, кто старался", font))
 
     def draw(self, scene, mouse_x, mouse_y, pressable):
         return_id_button = "NONE"
+        res = "NONE"
         for btn in self.buttons:
-            if btn.id_button == Buttons.HINT and setup.hint > 0:
+            if btn.id_button == Buttons.HINT and setup.hint > 0 and setup.error < 8:
                 res = btn.draw(scene, mouse_x, mouse_y, pressable)
-            elif btn.id_button == Buttons.NEXT and setup.level < setup.max_level:
+            elif btn.id_button == Buttons.NEXT and setup.level < setup.max_level and setup.error < 8:
                 res = btn.draw(scene, mouse_x, mouse_y, pressable)
-            elif btn.id_button == Buttons.PREV and setup.level > 0:
+            elif btn.id_button == Buttons.PREV and setup.level > 0 and setup.error < 8:
                 res = btn.draw(scene, mouse_x, mouse_y, pressable)
             elif btn.id_button != Buttons.HINT and \
                  btn.id_button != Buttons.NEXT and \
-                 btn.id_button != Buttons.PREV:
+                 btn.id_button != Buttons.PREV and setup.error < 8:
                 res = btn.draw(scene, mouse_x, mouse_y, pressable)
+            elif setup.error >= 8 and (btn.id_button == Buttons.EXIT or btn.id_button == Buttons.RESET_GAME):
+                res = btn.draw(scene, mouse_x, mouse_y, pressable)
+
             if res != "NONE":
                 return_id_button = res
 
-        res = self.buttons_difficulty[setup.difficulty].draw(scene, mouse_x, mouse_y, pressable)
+        if setup.error < 8:
+            res = self.buttons_difficulty[setup.difficulty].draw(scene, mouse_x, mouse_y, pressable)
+
         if res != "NONE":
             return_id_button = res
 

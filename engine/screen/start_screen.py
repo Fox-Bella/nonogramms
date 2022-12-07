@@ -9,13 +9,21 @@ class StartScreen:
         self.enabled = True
         self.alpha = 255
         self.img = pygame.image.load("png/skanmatic.png")
+        self.enabled = True
 
     def draw(self, scene, deltatime):
+        if self.enabled:
 
-        if self.frame < FPS * 1.5:
-            self.frame += FPS * deltatime
-        else:
-            self.alpha -= 255 * deltatime / 2
+            # УДАЛИТЬ
+            # self.alpha -= 2255 * deltatime / 2
 
-        self.img.set_alpha(self.alpha)
-        scene.blit(self.img, (0, 0))
+            if self.frame < FPS * 1.5:
+                self.frame += FPS * deltatime
+            else:
+                self.alpha -= 255 * deltatime / 2
+
+            if self.alpha <= 0:
+                self.enabled = False
+
+            self.img.set_alpha(self.alpha)
+            scene.blit(self.img, (0, 0))
