@@ -18,6 +18,7 @@ playGame = True
 deltatime = 0
 
 maps = AddMap()
+
 buttons = Buttons()
 sound = Sound(pygame)
 game = Game(maps, sound)

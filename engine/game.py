@@ -91,6 +91,9 @@ class Game:
         # Сбросим эффекты, если они были
         self.end_round_effect = self.clear_lists(self.end_round_effect)
 
+        if setup.level >= len(self.maps.level):
+            setup.reset()
+
         # Текущая карта
         self.current_map = self.maps.level[setup.level].data_level
 
@@ -247,7 +250,8 @@ class Game:
 
             """ ***** ПОБЕДА *********************************************************************"""
         elif self.gamestate == Game.WIN_GAME:
-            pass
+            if self.final_text is not None:
+                self.final_text.draw(scene, deltatime)
 
         self.label_text.draw(scene)
 
@@ -380,7 +384,11 @@ class Game:
         setup.max_level = min(setup.max_level, len(self.maps.level) - 1)
 
         if setup.level + 1 == len(self.maps.level):
+            self.final_text = FinalText("Поздравляем! Вы победили!",
+                                        "Отлично, вы собрали все сканворды в игре!",
+                                        "png/win_game_cat.png", self.font, 0, 795)
             self.gamestate = Game.WIN_GAME
+
         else:
 
             text_win = 'Выберите пункт "Следующая" для продолжения'
