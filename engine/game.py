@@ -382,6 +382,7 @@ class Game:
 
         setup.max_level = max(setup.level + 1, setup.max_level)
         setup.max_level = min(setup.max_level, len(self.maps.level) - 1)
+
         setup.hint += 1
         if setup.hint > 25:
             setup.hint = 25
