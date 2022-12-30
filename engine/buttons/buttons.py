@@ -6,21 +6,23 @@ import setup
 
 class Buttons:
 
-    CHECK = 0
-    RESTART = 1
-    HINT = 2
-    MATH_30 = 3
-    MATH_60 = 4
-    MATH_100 = 5
-    NEXT = 6
-    PREV = 7
-    EXIT = 8
-    RESET_GAME = 9
-    AUTHORS = 10
+    PLAY = 0
+    CHECK = 1
+    RESTART = 2
+    HINT = 3
+    MATH_30 = 4
+    MATH_60 = 5
+    MATH_100 = 6
+    NEXT = 7
+    PREV = 8
+    EXIT = 9
+    RESET_GAME = 10
+    AUTHORS = 11
 
     def __init__(self):
         self.buttons = []
         font = Font()
+        self.buttons.append(Button(Buttons.PLAY, 795, 540, ["button_question.png", "button_question_act.png"], "Как играть", font))
         self.buttons.append(Button(Buttons.CHECK, 795, 220, ["button_check_deact.png", "button_check_act.png"], "Правильно ли решено? Если нет, то увеличатся ошибки", font))
         self.buttons.append(Button(Buttons.RESTART, 795, 280, ["button_restart_deact.png", "button_restart_act.png"], "Начать раунд заново", font))
         self.buttons.append(Button(Buttons.HINT, 795, 340, ["button_hint_deact.png", "button_hint_act.png"], "Подсказать 1-3 случайные клетки", font))

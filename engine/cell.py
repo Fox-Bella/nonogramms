@@ -36,7 +36,7 @@ class Cell:
     def draw(self, scene: pygame.surface):
         key = f"cell_{self.x}{self.y}"
 
-        if self.print_to_screen == "?":
+        if self.print_to_screen =="?" :
             pygame.draw.rect(scene, TEXT_LIGHT_ATTENTION,
                              (self.x + (self.size_field - self.size_field // 1.5) // 2 , self.y,
                               self.size_field // 1.5, 21))

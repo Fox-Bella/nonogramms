@@ -1,12 +1,12 @@
-import setup
-from setup import *
-from data.add_map import AddMap
-# from data.add_map23456790 import AddMap
-from engine.game import Game
-from engine.buttons.buttons import Buttons
-from sound.sound import Sound
-from engine.screen.start_screen import StartScreen
 import pygame
+
+import setup
+from data.add_map import AddMap
+from engine.buttons.buttons import Buttons
+from engine.game import Game
+from engine.screen.start_screen import StartScreen
+from setup import *
+from sound.sound import Sound
 
 # Добавить чтобы работал pygame
 pygame.init()
@@ -76,6 +76,9 @@ while playGame:
 
         if pressed_btn == Buttons.AUTHORS:
             game.draw_authors(scene, deltatime)
+
+        if pressed_btn == Buttons.PLAY:
+            game.draw_play(scene, deltatime)
 
         if mouse_button_pressed_1 == 1 and pressed_btn != "NONE":
             mouse_button_pressed_1 = 0

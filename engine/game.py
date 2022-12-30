@@ -13,6 +13,7 @@ from engine.screen.label_text import LabelText
 from engine.screen.label_text_central import LabelTextCentral
 from engine.errors.helper import Helper
 from engine.screen.authors_text import AuthorsText
+from engine.screen.play_txt import PlayTxt
 from sound.sound import Sound
 from engine.screen.final_text import FinalText
 
@@ -55,6 +56,9 @@ class Game:
         # Вывод авторов
         self.authors = AuthorsText(self.font)
 
+        # Как играть
+        self.play_txt = PlayTxt(self.font)
+
         # Вывод текстовых меток
         self.label_text = LabelText(self.font)
 
@@ -93,6 +97,8 @@ class Game:
 
         if setup.level >= len(self.maps.level):
             setup.reset()
+
+        print(len(self.maps.level))
 
         # Текущая карта
         self.current_map = self.maps.level[setup.level].data_level
@@ -440,6 +446,9 @@ class Game:
 
     def draw_authors(self, scene, deltatime):
         self.authors.draw(scene, deltatime)
+
+    def draw_play(self, scene, deltatime):
+        self.play_txt.draw(scene, deltatime)
 
     # Конец игры / Ошибки
     def end_game(self):
