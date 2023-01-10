@@ -98,7 +98,7 @@ class Game:
         if setup.level >= len(self.maps.level):
             setup.reset()
 
-        print(len(self.maps.level))
+        # print(len(self.maps.level))
 
         # Текущая карта
         self.current_map = self.maps.level[setup.level].data_level
