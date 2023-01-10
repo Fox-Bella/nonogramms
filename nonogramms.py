@@ -8,7 +8,9 @@ from engine.screen.start_screen import StartScreen
 from setup import *
 from sound.sound import Sound
 
-# Добавить чтобы работал pygame
+# Подсказки глючат
+# Отключить кнопки при выигрыше
+
 pygame.init()
 pygame.display.set_caption("СКАН-МАТИК / Японские сканворды с математикой")
 size = [WIDTH, HEIGHT]
